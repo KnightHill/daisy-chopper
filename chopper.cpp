@@ -4,13 +4,32 @@ using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 
-uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX]
-    = {{0, 0, 0, 0, 0, 0, 0, 0},
-       {1, 0, 0, 0, 0, 0, 0, 0},
-       {1, 0, 0, 0, 1, 0, 0, 0},
-       {1, 0, 1, 0, 1, 0, 1, 0},
-       {1, 1, 1, 1, 1, 1, 1, 1},
-       {1, 1, 0, 0, 1, 1, 0, 0}};
+uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX] = {{1, 1, 1, 1},
+                                                              {1, 0, 1, 0},
+                                                              {1, 0, 0, 0},
+                                                              {0, 0, 0, 0},
+                                                              {1, 1, 0, 0},
+                                                              {1, 0, 0, 1},
+                                                              {1, 1, 1, 0},
+                                                              {0, 1, 1, 0}
+
+};
+
+void Chopper::Init(float sample_rate)
+{
+    sr_              = sample_rate;
+    sr_recip_        = 1.0f / sample_rate;
+    freq_            = 100.0f;
+    amp_             = 0.5f;
+    pw_              = 0.5f;
+    pw_rad_          = pw_ * TWOPI_F;
+    phase_           = 0.0f;
+    phase_inc_       = CalcPhaseInc(freq_);
+    eoc_             = true;
+    eor_             = true;
+    current_pattern_ = 0;
+    pattern_step_    = 0;
+}
 
 float Chopper::Process()
 {
@@ -22,7 +41,7 @@ float Chopper::Process()
     }
     else
     {
-        out = Patterns[current_pattern_][pattern_step_] ? -1.0f : 0.0f;
+        out = 0;
     }
 
     phase_ += phase_inc_;

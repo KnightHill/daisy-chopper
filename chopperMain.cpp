@@ -89,6 +89,11 @@ void UpdateButtons(void)
     {
         chopper.NextPattern();
     }
+
+    if(pod.button3.RisingEdge())
+    {
+        chopper.Reset();
+    }
 }
 
 void UpdateLEDs(void)
@@ -99,10 +104,11 @@ void UpdateLEDs(void)
         case 0: pod.led2.Set(1, 0, 0); break;
         case 1: pod.led2.Set(0, 1, 0); break;
         case 2: pod.led2.Set(0, 0, 1); break;
-        case 3: pod.led2.Set(1, 1, 0); break;
+        case 3: pod.led2.Set(0, 0, 0); break;
         case 4: pod.led2.Set(1, 0, 1); break;
         case 5: pod.led2.Set(0, 1, 1); break;
-        default: pod.led2.Set(0, 0, 0); break;
+        case 6: pod.led2.Set(1, 1, 0); break;
+        case 7: pod.led2.Set(1, 1, 1); break;
     }
     pod.UpdateLeds();
 }

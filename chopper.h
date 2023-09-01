@@ -8,8 +8,8 @@
 namespace bytebeat
 {
 
-#define PATTERN_STEPS_MAX 8
-#define PATTERNS_MAX 6
+#define PATTERN_STEPS_MAX 4
+#define PATTERNS_MAX 8
 
 class Chopper
 {
@@ -28,22 +28,7 @@ class Chopper
         - freq_ = 100 Hz
         - amp_ = 0.5
     */
-    void Init(float sample_rate)
-    {
-        sr_              = sample_rate;
-        sr_recip_        = 1.0f / sample_rate;
-        freq_            = 100.0f;
-        amp_             = 0.5f;
-        pw_              = 0.5f;
-        pw_rad_          = pw_ * TWOPI_F;
-        phase_           = 0.0f;
-        phase_inc_       = CalcPhaseInc(freq_);
-        eoc_             = true;
-        eor_             = true;
-        current_pattern_ = 0;
-        pattern_step_    = 0;
-    }
-
+    void Init(float sample_rate);
 
     /** Changes the frequency of the Chopper, and recalculates phase increment.
     */
