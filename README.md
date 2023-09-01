@@ -12,6 +12,8 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 # Patterns
 
+## 1/4th note patterns
+
 | Pattern No | LED 2 Color | Step 1 | Step 2 | Step 3 | Step 4 |
 | --- | --- | --- | --- | --- | --- |
 | 1 | RED | 1 | 1 | 1 | 1 |
