@@ -5,12 +5,12 @@ using namespace bytebeat;
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 
 uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX]
-    = {{1, 1, 1, 1, 1, 1, 1, 1},
+    = {{0, 0, 0, 0, 0, 0, 0, 0},
+       {1, 0, 0, 0, 0, 0, 0, 0},
+       {1, 0, 0, 0, 1, 0, 0, 0},
        {1, 0, 1, 0, 1, 0, 1, 0},
-       {1, 1, 0, 0, 1, 1, 0, 0},
-       {1, 1, 0, 1, 1, 0, 1, 1},
-       {1, 0, 0, 1, 1, 0, 0, 1},
-       {1, 0, 1, 1, 1, 0, 0, 1}};
+       {1, 1, 1, 1, 1, 1, 1, 1},
+       {1, 1, 0, 0, 1, 1, 0, 0}};
 
 float Chopper::Process()
 {

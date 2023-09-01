@@ -130,8 +130,12 @@ void InitSynth(void)
 {
     active = false;
     oldk1 = oldk2 = 0;
-    fChopperFreq  = 2.0f; // 2 Hz = 120 BPM?
-    fChopperPw    = 0.5f;
+
+    // http://bradthemad.org/guitar/tempo_explanation.php
+    // Freq(Hz) = BPM / 60
+    // 120 BPM = 2 Hz?
+    fChopperFreq = 2.0f;
+    fChopperPw   = 0.5f;
 
     pod.Init();
     pod.SetAudioBlockSize(4);
