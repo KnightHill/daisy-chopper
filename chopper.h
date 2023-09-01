@@ -16,7 +16,16 @@ class Chopper
   private:
     static uint8_t Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX];
 
+    void IncPatternStep(void);
+
   public:
+    enum Mode
+    {
+        Quarter,
+        Eight,
+        Sixteen
+    };
+
     Chopper() {}
     ~Chopper() {}
 
@@ -77,11 +86,7 @@ class Chopper
     void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
     /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
     */
-    void Reset(float _phase = 0.0f)
-    {
-        phase_        = _phase;
-        pattern_step_ = 0;
-    }
+    void Reset(float _phase = 0.0f);
 
     void NextPattern()
     {
@@ -108,6 +113,8 @@ class Chopper
     float   last_out_, last_freq_;
     bool    eor_, eoc_;
     int16_t current_pattern_, pattern_step_;
+    Mode    mode_;
+    size_t  tick_;
 };
 
 } // namespace bytebeat

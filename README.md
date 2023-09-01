@@ -28,7 +28,6 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 # Controls
 
-
 | Control | Description | Comment |
 | --- | --- | --- |
 | Button 1 | Slicer On/Off | pod |
