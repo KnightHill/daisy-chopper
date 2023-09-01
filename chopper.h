@@ -9,7 +9,7 @@ namespace bytebeat
 {
 
 #define PATTERN_STEPS_MAX 8
-#define PATTERNS_MAX 4
+#define PATTERNS_MAX 6
 
 class Chopper
 {

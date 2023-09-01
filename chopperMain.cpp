@@ -49,6 +49,16 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     UpdateKnobs();
 
     pod.led1.Set(active, 0, 0);
+    switch(chopper.GetCurrentPattern())
+    {
+        case 0: pod.led2.Set(1, 0, 0); break;
+        case 1: pod.led2.Set(0, 1, 0); break;
+        case 2: pod.led2.Set(0, 0, 1); break;
+        case 3: pod.led2.Set(1, 1, 0); break;
+        case 4: pod.led2.Set(1, 0, 1); break;
+        case 5: pod.led2.Set(0, 1, 1); break;
+        default: pod.led2.Set(0, 0, 0); break;
+    }
     pod.UpdateLeds();
 
     //audio
@@ -110,7 +120,7 @@ void InitSynth(void)
 {
     active = false;
     oldk1 = oldk2 = 0;
-    fChopperFreq  = 2.5f;
+    fChopperFreq  = 0.5f;
     fChopperPw    = 0.5f;
 
     pod.Init();
