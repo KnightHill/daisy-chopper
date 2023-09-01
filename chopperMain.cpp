@@ -23,6 +23,8 @@ bool ConditionalParameter(float  oldVal,
                           float &param,
                           float  update);
 void UpdateKnobs(void);
+void UpdateLEDs(void);
+void UpdateButtons(void);
 void InitSynth(void);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
@@ -34,32 +36,9 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
 
-    if(pod.button1.RisingEdge())
-    {
-        active = !active;
-        if(active)
-            chopper.Reset();
-    }
-
-    if(pod.button2.RisingEdge())
-    {
-        chopper.NextPattern();
-    }
-
-    UpdateKnobs();
-
-    pod.led1.Set(active, 0, 0);
-    switch(chopper.GetCurrentPattern())
-    {
-        case 0: pod.led2.Set(1, 0, 0); break;
-        case 1: pod.led2.Set(0, 1, 0); break;
-        case 2: pod.led2.Set(0, 0, 1); break;
-        case 3: pod.led2.Set(1, 1, 0); break;
-        case 4: pod.led2.Set(1, 0, 1); break;
-        case 5: pod.led2.Set(0, 1, 1); break;
-        default: pod.led2.Set(0, 0, 0); break;
-    }
-    pod.UpdateLeds();
+    UpdateButtons();
+    //UpdateKnobs();
+    UpdateLEDs();
 
     //audio
     for(size_t i = 0; i < size; i += 2)
@@ -97,6 +76,37 @@ bool ConditionalParameter(float  oldVal,
     return false;
 }
 
+void UpdateButtons(void)
+{
+    if(pod.button1.RisingEdge())
+    {
+        active = !active;
+        if(active)
+            chopper.Reset();
+    }
+
+    if(pod.button2.RisingEdge())
+    {
+        chopper.NextPattern();
+    }
+}
+
+void UpdateLEDs(void)
+{
+    pod.led1.Set(active, 0, 0);
+    switch(chopper.GetCurrentPattern())
+    {
+        case 0: pod.led2.Set(1, 0, 0); break;
+        case 1: pod.led2.Set(0, 1, 0); break;
+        case 2: pod.led2.Set(0, 0, 1); break;
+        case 3: pod.led2.Set(1, 1, 0); break;
+        case 4: pod.led2.Set(1, 0, 1); break;
+        case 5: pod.led2.Set(0, 1, 1); break;
+        default: pod.led2.Set(0, 0, 0); break;
+    }
+    pod.UpdateLeds();
+}
+
 void UpdateKnobs(void)
 {
     float k1 = pod.knob1.Process();
@@ -120,11 +130,12 @@ void InitSynth(void)
 {
     active = false;
     oldk1 = oldk2 = 0;
-    fChopperFreq  = 0.5f;
+    fChopperFreq  = 2.0f; // 2 Hz = 120 BPM?
     fChopperPw    = 0.5f;
 
     pod.Init();
     pod.SetAudioBlockSize(4);
+
     /*
     // Set sample rate to 8kHz
     SaiHandle::Config sai_config;
