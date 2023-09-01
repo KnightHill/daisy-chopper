@@ -6,7 +6,7 @@ Default tempo is set to 120 BPM (2Hz).
 
 # Patterns
 
-| Pattern No | LED Color | Step 1 | Step 2 | Step 3 | Step 4 |
+| Pattern No | LED 2 Color | Step 1 | Step 2 | Step 3 | Step 4 |
 | --- | --- | --- | --- | --- | --- |
 | 1 | RED | 1 | 1 | 1 | 1 |
 | 2 | GREEN | 1 | 0 | 1 | 0 |
@@ -26,7 +26,8 @@ Default tempo is set to 120 BPM (2Hz).
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Change slicer pattern | pod |
 | Button 3 | Reset pattern step | basic expansion board |
-| Knob 1 | Delete last stored BB parameters | pod |
-| Knob 2 | Delete last selected BB parameters | pod |
+| Button 4 | Set tempo (120 -> 140 -> 80 BPM) | basic expansion board |
+| Knob 1 | Set slicer PW ratio (10%-90%) | pod |
+| Knob 2 | N/A | pod |
 | LED 1 | Slicer Active | pod |
 | LED 2 | Current pattern | pod |

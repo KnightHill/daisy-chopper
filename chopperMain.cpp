@@ -10,12 +10,11 @@ using namespace bytebeat;
 static DaisyPod  pod;
 static Chopper   chopper;
 static Utilities util;
-static Parameter chopperFreq;
 static Parameter chopperPw;
 
 static bool  active;
 static float fChopperFreq, fChopperPw;
-static float oldk1, oldk2;
+static float oldk1;
 
 // prototypes
 bool ConditionalParameter(float  oldVal,
@@ -37,7 +36,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     pod.ProcessDigitalControls();
 
     UpdateButtons();
-    //UpdateKnobs();
+    UpdateKnobs();
     UpdateLEDs();
 
     //audio
@@ -116,32 +115,25 @@ void UpdateLEDs(void)
 void UpdateKnobs(void)
 {
     float k1 = pod.knob1.Process();
-    float k2 = pod.knob2.Process();
 
-    if(ConditionalParameter(oldk1, k1, fChopperFreq, chopperFreq.Process()))
-    {
-        chopper.SetFreq(fChopperFreq);
-    }
-
-    if(ConditionalParameter(oldk2, k2, fChopperPw, chopperPw.Process()))
+    if(ConditionalParameter(oldk1, k1, fChopperPw, chopperPw.Process()))
     {
         chopper.SetPw(fChopperPw);
     }
 
     oldk1 = k1;
-    oldk2 = k2;
 }
 
 void InitSynth(void)
 {
     active = false;
-    oldk1 = oldk2 = 0;
+    oldk1  = 0;
 
     // http://bradthemad.org/guitar/tempo_explanation.php
     // Freq(Hz) = BPM / 60
-    // 120 BPM = 2 Hz?
+    // 120 BPM = 2 Hz
     fChopperFreq = 2.0f;
-    fChopperPw   = 0.5f;
+    fChopperPw   = 0.3f;
 
     pod.Init();
     pod.SetAudioBlockSize(4);
@@ -161,8 +153,7 @@ void InitSynth(void)
     chopper.SetAmp(1.0f);
     chopper.SetPw(fChopperPw);
 
-    chopperFreq.Init(pod.knob1, 0.2, 6.0, chopperFreq.LINEAR);
-    chopperPw.Init(pod.knob2, 0.0, 1.0, chopperPw.LINEAR);
+    chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
 
     // initialize the logger
     // Debug on Linux:
