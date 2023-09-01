@@ -34,7 +34,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
                    AudioHandle::InterleavingOutputBuffer out,
                    size_t                                size)
 {
-    float inl, inr;
+    static float inl, inr;
 
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
@@ -43,7 +43,6 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     UpdateKnobs();
     UpdateLEDs();
 
-    //audio
     for(size_t i = 0; i < size; i += 2)
     {
         inl = in[i];

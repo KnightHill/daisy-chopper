@@ -35,5 +35,5 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 | Button 4 | Set tempo (120 -> 140 -> 80 BPM) | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
-| LED 1 | Slicer On/Off, Intensity shows tempo (30% - 80 BPM, 60% - 120 BPM, 100% - 140 BPM) | pod |
+| LED 1 | Slicer On/Off, Intensity shows tempo | pod |
 | LED 2 | Current pattern | pod |
