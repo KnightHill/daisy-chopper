@@ -8,8 +8,14 @@
 namespace bytebeat
 {
 
+#define PATTERN_STEPS_MAX 4
+#define PATTERNS_MAX 8
+
 class Chopper
 {
+  private:
+    static uint8_t Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX];
+
   public:
     Chopper() {}
     ~Chopper() {}
@@ -22,20 +28,7 @@ class Chopper
         - freq_ = 100 Hz
         - amp_ = 0.5
     */
-    void Init(float sample_rate)
-    {
-        sr_        = sample_rate;
-        sr_recip_  = 1.0f / sample_rate;
-        freq_      = 100.0f;
-        amp_       = 0.5f;
-        pw_        = 0.5f;
-        pw_rad_    = pw_ * TWOPI_F;
-        phase_     = 0.0f;
-        phase_inc_ = CalcPhaseInc(freq_);
-        eoc_       = true;
-        eor_       = true;
-    }
-
+    void Init(float sample_rate);
 
     /** Changes the frequency of the Chopper, and recalculates phase increment.
     */
@@ -84,15 +77,39 @@ class Chopper
     void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
     /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
     */
-    void Reset(float _phase = 0.0f) { phase_ = _phase; }
+    void Reset(float _phase = 0.0f)
+    {
+        phase_        = _phase;
+        pattern_step_ = 0;
+    }
+
+    void NextPattern()
+    {
+        current_pattern_++;
+        if(current_pattern_ >= PATTERNS_MAX)
+            current_pattern_ = 0;
+        //pattern_step_ = 0;
+    }
+
+    void PrevPattern()
+    {
+        current_pattern_--;
+        if(current_pattern_ < 0)
+            current_pattern_ = PATTERNS_MAX - 1;
+        //pattern_step_ = 0;
+    }
+
+    inline int16_t GetCurrentPattern() { return current_pattern_; }
 
   private:
-    float CalcPhaseInc(float f);
-    float amp_, freq_, pw_, pw_rad_;
-    float sr_, sr_recip_, phase_, phase_inc_;
-    float last_out_, last_freq_;
-    bool  eor_, eoc_;
+    float   CalcPhaseInc(float f);
+    float   amp_, freq_, pw_, pw_rad_;
+    float   sr_, sr_recip_, phase_, phase_inc_;
+    float   last_out_, last_freq_;
+    bool    eor_, eoc_;
+    int16_t current_pattern_, pattern_step_;
 };
+
 } // namespace bytebeat
 #endif
 #endif

@@ -16,12 +16,12 @@ class Utilities
   public:
     Utilities() {}
     void Init(daisy::DaisyPod *);
-    void BlinkLED(RGB rgb, int delay = 140);
+    void BlinkLED(RGB rgb, unsigned long delay = 140, size_t number = 3);
 
   private:
     daisy::DaisyPod *pod_;
 
-    void BlinkLEDColor(RGB rgb, int delay);
+    void BlinkLEDColor(RGB rgb, unsigned long delay);
 };
 
 

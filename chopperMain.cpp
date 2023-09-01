@@ -10,9 +10,22 @@ using namespace bytebeat;
 static DaisyPod  pod;
 static Chopper   chopper;
 static Utilities util;
+static Parameter chopperFreq;
+static Parameter chopperPw;
 
-bool active;
+static bool  active;
+static float fChopperFreq, fChopperPw;
+static float oldk1, oldk2;
 
+// prototypes
+bool ConditionalParameter(float  oldVal,
+                          float  newVal,
+                          float &param,
+                          float  update);
+void UpdateKnobs(void);
+void UpdateLEDs(void);
+void UpdateButtons(void);
+void InitSynth(void);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
                    AudioHandle::InterleavingOutputBuffer out,
@@ -23,13 +36,9 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
 
-    if(pod.button1.RisingEdge())
-    {
-        active = !active;
-    }
-
-    pod.led1.Set(active, 0, 0);
-    pod.UpdateLeds();
+    UpdateButtons();
+    //UpdateKnobs();
+    UpdateLEDs();
 
     //audio
     for(size_t i = 0; i < size; i += 2)
@@ -40,7 +49,9 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
         float gate = 1.0f;
 
         if(active)
+        {
             gate = chopper.Process();
+        }
 
         // left out
         out[i] = inl * gate;
@@ -50,12 +61,91 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     }
 }
 
-void InitSynth()
+// Updates values if knob had changed
+bool ConditionalParameter(float  oldVal,
+                          float  newVal,
+                          float &param,
+                          float  update)
+{
+    if(abs(oldVal - newVal) > 0.00005)
+    {
+        param = update;
+        return true;
+    }
+
+    return false;
+}
+
+void UpdateButtons(void)
+{
+    if(pod.button1.RisingEdge())
+    {
+        active = !active;
+        if(active)
+            chopper.Reset();
+    }
+
+    if(pod.button2.RisingEdge())
+    {
+        chopper.NextPattern();
+    }
+
+    if(pod.button3.RisingEdge())
+    {
+        chopper.Reset();
+    }
+}
+
+void UpdateLEDs(void)
+{
+    pod.led1.Set(active, 0, 0);
+    switch(chopper.GetCurrentPattern())
+    {
+        case 0: pod.led2.Set(1, 0, 0); break;
+        case 1: pod.led2.Set(0, 1, 0); break;
+        case 2: pod.led2.Set(0, 0, 1); break;
+        case 3: pod.led2.Set(0, 0, 0); break;
+        case 4: pod.led2.Set(1, 0, 1); break;
+        case 5: pod.led2.Set(0, 1, 1); break;
+        case 6: pod.led2.Set(1, 1, 0); break;
+        case 7: pod.led2.Set(1, 1, 1); break;
+    }
+    pod.UpdateLeds();
+}
+
+void UpdateKnobs(void)
+{
+    float k1 = pod.knob1.Process();
+    float k2 = pod.knob2.Process();
+
+    if(ConditionalParameter(oldk1, k1, fChopperFreq, chopperFreq.Process()))
+    {
+        chopper.SetFreq(fChopperFreq);
+    }
+
+    if(ConditionalParameter(oldk2, k2, fChopperPw, chopperPw.Process()))
+    {
+        chopper.SetPw(fChopperPw);
+    }
+
+    oldk1 = k1;
+    oldk2 = k2;
+}
+
+void InitSynth(void)
 {
     active = false;
+    oldk1 = oldk2 = 0;
+
+    // http://bradthemad.org/guitar/tempo_explanation.php
+    // Freq(Hz) = BPM / 60
+    // 120 BPM = 2 Hz?
+    fChopperFreq = 2.0f;
+    fChopperPw   = 0.5f;
 
     pod.Init();
     pod.SetAudioBlockSize(4);
+
     /*
     // Set sample rate to 8kHz
     SaiHandle::Config sai_config;
@@ -67,9 +157,12 @@ void InitSynth()
 
     float sample_rate = pod.AudioSampleRate();
     chopper.Init(sample_rate);
-    chopper.SetFreq(2.5f);
+    chopper.SetFreq(fChopperFreq);
     chopper.SetAmp(1.0f);
-    chopper.SetPw(0.5f);
+    chopper.SetPw(fChopperPw);
+
+    chopperFreq.Init(pod.knob1, 0.2, 6.0, chopperFreq.LINEAR);
+    chopperPw.Init(pod.knob2, 0.0, 1.0, chopperPw.LINEAR);
 
     // initialize the logger
     // Debug on Linux:
