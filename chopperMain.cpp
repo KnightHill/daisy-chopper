@@ -7,14 +7,18 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
+#define TEMPO_MAX 3
+
 static DaisyPod  pod;
 static Chopper   chopper;
 static Utilities util;
 static Parameter chopperPw;
 
-static bool  active;
-static float fChopperFreq, fChopperPw;
-static float oldk1;
+static uint8_t tempo; // 0 - 120 BPM, 1 - 140 BPM, 2 - 80 BPM
+static float   tempoFreq[TEMPO_MAX] = {2.0f, 2.333333f, 1.333333f};
+static bool    active;
+static float   fChopperPw;
+static float   oldk1;
 
 // prototypes
 bool ConditionalParameter(float  oldVal,
@@ -93,11 +97,34 @@ void UpdateButtons(void)
     {
         chopper.Reset();
     }
+
+    if(pod.button4.RisingEdge())
+    {
+        if(++tempo >= TEMPO_MAX)
+        {
+            tempo = 0;
+        }
+
+        chopper.SetFreq(tempoFreq[tempo]);
+    }
 }
 
 void UpdateLEDs(void)
 {
-    pod.led1.Set(active, 0, 0);
+    if(active)
+    {
+        switch(tempo)
+        {
+            case 0: pod.led1.Set(0.6, 0, 0); break;
+            case 1: pod.led1.Set(1.0, 0, 0); break;
+            case 2: pod.led1.Set(0.3, 0, 0); break;
+        }
+    }
+    else
+    {
+        pod.led1.Set(0, 0, 0);
+    }
+
     switch(chopper.GetCurrentPattern())
     {
         case 0: pod.led2.Set(1, 0, 0); break;
@@ -126,14 +153,14 @@ void UpdateKnobs(void)
 
 void InitSynth(void)
 {
+    tempo  = 0;
     active = false;
     oldk1  = 0;
 
     // http://bradthemad.org/guitar/tempo_explanation.php
     // Freq(Hz) = BPM / 60
     // 120 BPM = 2 Hz
-    fChopperFreq = 2.0f;
-    fChopperPw   = 0.3f;
+    fChopperPw = 0.3f;
 
     pod.Init();
     pod.SetAudioBlockSize(4);
@@ -149,7 +176,7 @@ void InitSynth(void)
 
     float sample_rate = pod.AudioSampleRate();
     chopper.Init(sample_rate);
-    chopper.SetFreq(fChopperFreq);
+    chopper.SetFreq(tempoFreq[tempo]);
     chopper.SetAmp(1.0f);
     chopper.SetPw(fChopperPw);
 
