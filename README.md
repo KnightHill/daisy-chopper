@@ -12,10 +12,10 @@ Default tempo is set to 120 BPM (2Hz).
 | 2 | GREEN | 1 | 0 | 1 | 0 |
 | 3 | BLUE | 1 | 0 | 0 | 0 |
 | 4 | DARK | 0 | 0 | 0 | 0 |
-| 5 | RED | 1 | 1 | 0 | 0 |
-| 6 | RED | 1 | 1 | 1 | 0 |
-| 7 | RED | 1 | 0 | 0 | 1 |
-| 8 | RED | 0 | 1 | 1 | 0 |
+| 5 | MAGENTA | 1 | 1 | 0 | 0 |
+| 6 | CYAN | 1 | 1 | 1 | 0 |
+| 7 | GOLD | 1 | 0 | 0 | 1 |
+| 8 | WHITE | 0 | 1 | 1 | 0 |
 
 
 # Controls
