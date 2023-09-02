@@ -93,6 +93,7 @@ class Chopper
         current_pattern_++;
         if(current_pattern_ >= PATTERNS_MAX)
             current_pattern_ = 0;
+        // Rest pattern step?
         //pattern_step_ = 0;
     }
 
@@ -101,6 +102,7 @@ class Chopper
         current_pattern_--;
         if(current_pattern_ < 0)
             current_pattern_ = PATTERNS_MAX - 1;
+        // Rest pattern step?
         //pattern_step_ = 0;
     }
 
@@ -115,7 +117,7 @@ class Chopper
     bool           eor_, eoc_;
     int16_t        current_pattern_, pattern_step_;
     Mode           mode_;
-    size_t         tick_;
+    //size_t         tick_;
 };
 
 } // namespace bytebeat

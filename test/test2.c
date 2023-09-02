@@ -6,13 +6,13 @@
 #define M_TWO_PI (M_PI * 2.0)
 #define M_HALF_PI (M_PI * 0.5)
 
-const double phase_inc = 0.1;
+const double phase_inc = 0.002;
 double       phase     = 0;
 
 void Process()
 {
     double pphase = fmod(phase, M_HALF_PI);
-    printf("phase=%.2f pphase=%.2f\n", phase, pphase);
+    printf("phase=%.3f pphase=%.3f\n", phase, pphase);
 
     if(pphase + phase_inc > M_HALF_PI)
     {
@@ -30,7 +30,7 @@ void Process()
 int main(void)
 {
     size_t i = 0;
-    while(i < 120)
+    while(i <)
     {
         Process();
         i++;

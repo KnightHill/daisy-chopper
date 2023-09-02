@@ -3,8 +3,6 @@
 using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
-constexpr float HALF_PI      = TWOPI_F / 4.0f;
-//constexpr float PI_F         = TWOPI_F / 2.0f;
 
 // 1/4 notes
 uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX] = {
@@ -37,14 +35,14 @@ void Chopper::Init(float sample_rate)
     current_pattern_ = 0;
     pattern_step_    = 0;
     mode_            = Quarter;
-    tick_            = 0;
+    //tick_            = 0;
 }
 
 void Chopper::Reset(float _phase)
 {
     phase_        = _phase;
     pattern_step_ = 0;
-    tick_         = 0;
+    //tick_         = 0;
 }
 
 void Chopper::IncPatternStep()
@@ -66,45 +64,27 @@ float Chopper::Process()
         out = 0;
     }
 
-
     // 1/4
-    /*
-    float pphase = fmod(phase_, TWOPI_F);
-    if(pphase + phase_inc_ > TWOPI_F)
-        IncPatternStep();
-    */
-
-    // 1/8
-    float pphase = fmod(phase_, PI_F);
-    if(pphase + phase_inc_ > PI_F)
-        IncPatternStep();
-
-
-    /*
-    volatile float pphase = fmod(phase_, HALF_PI);
-    if(pphase + phase_inc_ > HALF_PI)
+    if(mode_ == Quarter)
     {
-        // ticks every 16th note
-        tick_++;
+        float pphase = fmod(phase_, TWOPI_F);
+        if(pphase + phase_inc_ > TWOPI_F)
+            IncPatternStep();
     }
-
-    switch(mode_)
+    else if(mode_ == Eight)
     {
-        case Quarter:
-            if(tick_ % 4 == 0)
-            {
-                IncPatternStep();
-            }
-            break;
-        case Eight:
-            if(tick_ % 2 == 0)
-            {
-                IncPatternStep();
-            }
-            break;
-        case Sixteen: IncPatternStep(); break;
+        // 1/8
+        float pphase = fmod(phase_, PI_F);
+        if(pphase + phase_inc_ > PI_F)
+            IncPatternStep();
     }
-*/
+    else
+    {
+        // 1/16
+        float pphase = fmod(phase_, HALFPI_F);
+        if(pphase + phase_inc_ > HALFPI_F)
+            IncPatternStep();
+    }
 
     phase_ += phase_inc_;
 
