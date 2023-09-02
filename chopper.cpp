@@ -4,7 +4,6 @@ using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 
-// 1/4 notes
 uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX] = {
 
     {1, 1, 1, 1},
@@ -17,8 +16,6 @@ uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX] = {
     {0, 1, 1, 0}
 
 };
-
-// 1/8 Notes
 
 void Chopper::Init(float sample_rate)
 {
@@ -34,8 +31,6 @@ void Chopper::Init(float sample_rate)
     eor_             = true;
     current_pattern_ = 0;
     pattern_step_    = 0;
-    mode_            = Quarter;
-    //tick_            = 0;
 }
 
 void Chopper::Reset(float _phase)
@@ -117,35 +112,15 @@ float Chopper::Process8()
 float Chopper::Process16()
 {
     float out;
+    float quadrant_index = floorf(phase_ / HALFPI_F);
 
-    if(phase_ < HALFPI_F)
-    {
-        if(phase_ < pw_rad_ / 4.0f)
-            out = Patterns[current_pattern_][pattern_step_] ? 1.0f : 0.0f;
-        else
-            out = 0;
-    }
-    else if(phase_ >= HALFPI_F && phase_ < PI_F)
-    {
-        if(phase_ - HALFPI_F < pw_rad_ / 4.0f)
-            out = Patterns[current_pattern_][pattern_step_ + 1] ? 1.0f : 0.0f;
-        else
-            out = 0;
-    }
-    else if(phase_ >= PI_F && phase_ < PI_F + HALFPI_F)
-    {
-        if(phase_ - PI_F < pw_rad_ / 4.0f)
-            out = Patterns[current_pattern_][pattern_step_ + 2] ? 1.0f : 0.0f;
-        else
-            out = 0;
-    }
+    if(phase_ - (HALFPI_F * quadrant_index) < pw_rad_ / 4.0f)
+        out = Patterns[current_pattern_]
+                      [pattern_step_ + (uint16_t)quadrant_index]
+                  ? 1.0f
+                  : 0.0f;
     else
-    {
-        if(phase_ - (PI_F + HALFPI_F) < pw_rad_ / 4.0f)
-            out = Patterns[current_pattern_][pattern_step_ + 3] ? 1.0f : 0.0f;
-        else
-            out = 0;
-    }
+        out = 0;
 
     phase_ += phase_inc_;
 
@@ -153,10 +128,8 @@ float Chopper::Process16()
     {
         phase_ -= TWOPI_F;
         eoc_ = true;
-        IncPatternStep();
-        IncPatternStep();
-        IncPatternStep();
-        IncPatternStep();
+        for(uint16_t i = 0; i < 4; i++)
+            IncPatternStep();
     }
     else
     {
@@ -169,52 +142,7 @@ float Chopper::Process16()
 
 float Chopper::Process()
 {
-    float out;
-
-    if(phase_ < pw_rad_)
-        out = Patterns[current_pattern_][pattern_step_] ? 1.0f : 0.0f;
-    else
-        out = 0;
-
-    /*
-    // 1/4
-    if(mode_ == Quarter)
-    {
-        float pphase = fmodf(phase_, TWOPI_F);
-        if(pphase + phase_inc_ > TWOPI_F)
-            IncPatternStep();
-    }
-    else if(mode_ == Eight)
-    {
-        // 1/8
-        float pphase = fmodf(phase_, PI_F);
-        if(pphase + phase_inc_ > PI_F)
-            IncPatternStep();
-    }
-    else
-    {
-        // 1/16
-        float pphase = fmodf(phase_, HALFPI_F);
-        if(pphase + phase_inc_ > HALFPI_F)
-            IncPatternStep();
-    }
-*/
-
-    phase_ += phase_inc_;
-
-    if(phase_ > TWOPI_F)
-    {
-        phase_ -= TWOPI_F;
-        eoc_ = true;
-        IncPatternStep();
-    }
-    else
-    {
-        eoc_ = false;
-    }
-    eor_ = (phase_ - phase_inc_ < PI_F && phase_ >= PI_F);
-
-    return out * amp_;
+    return Process16();
 }
 
 float Chopper::CalcPhaseInc(float f)
