@@ -34,6 +34,7 @@ void UpdateKnobs(void);
 void UpdateLEDs(void);
 void UpdateButtons(void);
 void UpdateEncoder(void);
+void Controls(void);
 void InitSynth(void);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
@@ -42,18 +43,23 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
 {
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
-
-    UpdateButtons();
-    UpdateEncoder();
-    UpdateKnobs();
-    UpdateLEDs();
+    Controls();
 
     for(size_t i = 0; i < size; i += 2)
     {
         const float gate = active ? chopper.Process() : 1.0f;
-        out[i]           = gate * in[i];
-        out[i + 1]       = gate * in[i + 1];
+
+        out[i]     = gate * in[i];
+        out[i + 1] = gate * in[i + 1];
     }
+}
+
+void Controls(void)
+{
+    UpdateButtons();
+    UpdateEncoder();
+    UpdateKnobs();
+    UpdateLEDs();
 }
 
 // Updates values if knob had changed
@@ -158,11 +164,7 @@ void InitSynth(void)
     chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
 
     // initialize the logger
-    // Debug on Linux:
-    // cu -l /dev/ttyACM0
-    // screen /dev/ttyACM0
     pod.seed.StartLog(false);
-    // System::Delay(250);
 
     util.BlinkLED(WHITE);
 }

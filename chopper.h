@@ -40,12 +40,11 @@ class Chopper
         phase_inc_ = CalcPhaseInc(f);
     }
 
-
     /** Sets the amplitude of the waveform.
     */
     inline void SetAmp(const float a) { amp_ = a; }
 
-    /** Sets the pulse width for WAVE_SQUARE and WAVE_POLYBLEP_SQUARE (range 0 - 1)
+    /** Sets the pulse width (range 0 - 1)
      */
     inline void SetPw(const float pw)
     {
@@ -73,7 +72,6 @@ class Chopper
     */
     float Process();
 
-
     /** Adds a value 0.0-1.0 (mapped to 0.0-TWO_PI) to the current phase. Useful for PM and "FM" synthesis.
     */
     void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
@@ -81,22 +79,22 @@ class Chopper
     */
     void Reset(float _phase = 0.0f);
 
-    void NextPattern()
+    void NextPattern(bool reset = false)
     {
         current_pattern_++;
         if(current_pattern_ >= PATTERNS_MAX)
             current_pattern_ = 0;
-        // Reset pattern step?
-        //pattern_step_ = 0;
+        if(reset)
+            pattern_step_ = 0;
     }
 
-    void PrevPattern()
+    void PrevPattern(bool reset = false)
     {
         current_pattern_--;
         if(current_pattern_ < 0)
             current_pattern_ = PATTERNS_MAX - 1;
-        // Reset pattern step?
-        //pattern_step_ = 0;
+        if(reset)
+            pattern_step_ = 0;
     }
 
     inline int16_t GetCurrentPattern() { return current_pattern_; }
