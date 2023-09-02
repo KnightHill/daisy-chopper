@@ -107,14 +107,15 @@ class Chopper
     inline int16_t GetCurrentPattern() { return current_pattern_; }
 
   private:
-    float   CalcPhaseInc(float f);
-    float   amp_, freq_, pw_, pw_rad_;
-    float   sr_, sr_recip_, phase_, phase_inc_;
-    float   last_out_, last_freq_;
-    bool    eor_, eoc_;
-    int16_t current_pattern_, pattern_step_;
-    Mode    mode_;
-    size_t  tick_;
+    float          CalcPhaseInc(float f);
+    float          amp_, freq_, pw_, pw_rad_;
+    float          sr_, sr_recip_;
+    volatile float phase_, phase_inc_;
+    float          last_out_, last_freq_;
+    bool           eor_, eoc_;
+    int16_t        current_pattern_, pattern_step_;
+    Mode           mode_;
+    size_t         tick_;
 };
 
 } // namespace bytebeat

@@ -4,6 +4,7 @@ using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 constexpr float HALF_PI      = TWOPI_F / 4.0f;
+//constexpr float PI_F         = TWOPI_F / 2.0f;
 
 // 1/4 notes
 uint8_t Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX] = {
@@ -65,7 +66,23 @@ float Chopper::Process()
         out = 0;
     }
 
-    if(fmod(phase_, HALF_PI) + phase_inc_ > HALF_PI)
+
+    // 1/4
+    /*
+    float pphase = fmod(phase_, TWOPI_F);
+    if(pphase + phase_inc_ > TWOPI_F)
+        IncPatternStep();
+    */
+
+    // 1/8
+    float pphase = fmod(phase_, PI_F);
+    if(pphase + phase_inc_ > PI_F)
+        IncPatternStep();
+
+
+    /*
+    volatile float pphase = fmod(phase_, HALF_PI);
+    if(pphase + phase_inc_ > HALF_PI)
     {
         // ticks every 16th note
         tick_++;
@@ -87,6 +104,7 @@ float Chopper::Process()
             break;
         case Sixteen: IncPatternStep(); break;
     }
+*/
 
     phase_ += phase_inc_;
 
@@ -94,6 +112,7 @@ float Chopper::Process()
     {
         phase_ -= TWOPI_F;
         eoc_ = true;
+        // IncPatternStep();
     }
     else
     {
