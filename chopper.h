@@ -16,6 +16,8 @@ class Chopper
   private:
     static uint8_t Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX];
 
+    void IncPatternStep(void);
+
   public:
     Chopper() {}
     ~Chopper() {}
@@ -77,17 +79,14 @@ class Chopper
     void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
     /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
     */
-    void Reset(float _phase = 0.0f)
-    {
-        phase_        = _phase;
-        pattern_step_ = 0;
-    }
+    void Reset(float _phase = 0.0f);
 
     void NextPattern()
     {
         current_pattern_++;
         if(current_pattern_ >= PATTERNS_MAX)
             current_pattern_ = 0;
+        // Rest pattern step?
         //pattern_step_ = 0;
     }
 
@@ -96,18 +95,24 @@ class Chopper
         current_pattern_--;
         if(current_pattern_ < 0)
             current_pattern_ = PATTERNS_MAX - 1;
+        // Rest pattern step?
         //pattern_step_ = 0;
     }
 
     inline int16_t GetCurrentPattern() { return current_pattern_; }
 
   private:
-    float   CalcPhaseInc(float f);
-    float   amp_, freq_, pw_, pw_rad_;
-    float   sr_, sr_recip_, phase_, phase_inc_;
-    float   last_out_, last_freq_;
-    bool    eor_, eoc_;
-    int16_t current_pattern_, pattern_step_;
+    float          CalcPhaseInc(float f);
+    float          amp_, freq_, pw_, pw_rad_;
+    float          sr_, sr_recip_;
+    volatile float phase_, phase_inc_;
+    float          last_out_, last_freq_;
+    bool           eor_, eoc_;
+    int16_t        current_pattern_, pattern_step_;
+
+    float Process4(void);
+    float Process8(void);
+    float Process16(void);
 };
 
 } // namespace bytebeat

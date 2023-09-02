@@ -2,6 +2,7 @@
 #include "daisysp.h"
 #include "util.h"
 #include "chopper.h"
+#include "colors.h"
 
 using namespace daisysp;
 using namespace daisy;
@@ -28,38 +29,26 @@ bool ConditionalParameter(float  oldVal,
 void UpdateKnobs(void);
 void UpdateLEDs(void);
 void UpdateButtons(void);
+void UpdateEncoder(void);
 void InitSynth(void);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
                    AudioHandle::InterleavingOutputBuffer out,
                    size_t                                size)
 {
-    static float inl, inr;
-
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
 
     UpdateButtons();
+    UpdateEncoder();
     UpdateKnobs();
     UpdateLEDs();
 
     for(size_t i = 0; i < size; i += 2)
     {
-        inl = in[i];
-        inr = in[i + 1];
-
-        float gate = 1.0f;
-
-        if(active)
-        {
-            gate = chopper.Process();
-        }
-
-        // left out
-        out[i] = inl * gate;
-
-        // right out
-        out[i + 1] = inr * gate;
+        const float gate = active ? chopper.Process() : 1.0f;
+        out[i]           = gate * in[i];
+        out[i + 1]       = gate * in[i + 1];
     }
 }
 
@@ -89,22 +78,16 @@ void UpdateButtons(void)
 
     if(pod.button2.RisingEdge())
     {
-        chopper.NextPattern();
-    }
-
-    if(pod.button3.RisingEdge())
-    {
-        chopper.Reset();
-    }
-
-    if(pod.button4.RisingEdge())
-    {
         if(++tempo >= TEMPO_MAX)
         {
             tempo = 0;
         }
 
         chopper.SetFreq(tempoFreq[tempo]);
+    }
+    if(pod.button3.RisingEdge())
+    {
+        chopper.Reset();
     }
 }
 
@@ -126,14 +109,14 @@ void UpdateLEDs(void)
 
     switch(chopper.GetCurrentPattern())
     {
-        case 0: pod.led2.Set(1, 0, 0); break;
-        case 1: pod.led2.Set(0, 1, 0); break;
-        case 2: pod.led2.Set(0, 0, 1); break;
-        case 3: pod.led2.Set(0, 0, 0); break;
-        case 4: pod.led2.Set(1, 0, 1); break;
-        case 5: pod.led2.Set(0, 1, 1); break;
-        case 6: pod.led2.Set(1, 1, 0); break;
-        case 7: pod.led2.Set(1, 1, 1); break;
+        case 0: pod.led2.Set(RED); break;
+        case 1: pod.led2.Set(GREEN); break;
+        case 2: pod.led2.Set(BLUE); break;
+        case 3: pod.led2.Set(BLACK); break;
+        case 4: pod.led2.Set(MAGENTA); break;
+        case 5: pod.led2.Set(CYAN); break;
+        case 6: pod.led2.Set(GOLD); break;
+        case 7: pod.led2.Set(WHITE); break;
     }
     pod.UpdateLeds();
 }
@@ -148,6 +131,20 @@ void UpdateKnobs(void)
     }
 
     oldk1 = k1;
+}
+
+void UpdateEncoder(void)
+{
+    //if(pod.encoder.RisingEdge()) {}
+    int32_t inc = pod.encoder.Increment();
+    if(inc == 1)
+    {
+        chopper.NextPattern();
+    }
+    else if(inc == -1)
+    {
+        chopper.PrevPattern();
+    }
 }
 
 void InitSynth(void)
