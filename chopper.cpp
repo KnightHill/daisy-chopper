@@ -56,14 +56,11 @@ float Chopper::Process()
     float out;
 
     if(phase_ < pw_rad_)
-    {
         out = Patterns[current_pattern_][pattern_step_] ? 1.0f : 0.0f;
-    }
     else
-    {
         out = 0;
-    }
 
+    /*
     // 1/4
     if(mode_ == Quarter)
     {
@@ -85,6 +82,7 @@ float Chopper::Process()
         if(pphase + phase_inc_ > HALFPI_F)
             IncPatternStep();
     }
+*/
 
     phase_ += phase_inc_;
 
@@ -92,7 +90,7 @@ float Chopper::Process()
     {
         phase_ -= TWOPI_F;
         eoc_ = true;
-        // IncPatternStep();
+        IncPatternStep();
     }
     else
     {
