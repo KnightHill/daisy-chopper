@@ -8,7 +8,8 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define TEMPO_MAX 3
+#define TEMPO_MIN 60
+#define TEMPO_MAX 180
 
 static DaisyPod  pod;
 static Chopper   chopper;
@@ -19,23 +20,23 @@ static Parameter chopperPw;
 // Freq(Hz) = BPM / 60
 // 120 BPM = 2 Hz
 
-static uint8_t tempo; // 0 - 80 BPM, 1 - 120 BPM, 2 - 140 BPM
-static float   tempoFreq[TEMPO_MAX] = {1.333333f, 2.0f, 2.333333f};
+static uint8_t tempo;
 static bool    active;
 static float   fChopperPw;
 static float   oldk1;
 
 // prototypes
-bool ConditionalParameter(float  oldVal,
-                          float  newVal,
-                          float &param,
-                          float  update);
-void UpdateKnobs(void);
-void UpdateLEDs(void);
-void UpdateButtons(void);
-void UpdateEncoder(void);
-void Controls(void);
-void InitSynth(void);
+bool  ConditionalParameter(float  oldVal,
+                           float  newVal,
+                           float &param,
+                           float  update);
+void  UpdateKnobs(void);
+void  UpdateLEDs(void);
+void  UpdateButtons(void);
+void  UpdateEncoder(void);
+void  Controls(void);
+void  InitSynth(void);
+float CalcTempFreq(uint8_t tempo);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
                    AudioHandle::InterleavingOutputBuffer out,
@@ -89,12 +90,20 @@ void UpdateButtons(void)
     if(pod.button2.RisingEdge())
     {
         if(++tempo >= TEMPO_MAX)
-            tempo = 0;
+            tempo = TEMPO_MAX;
 
-        chopper.SetFreq(tempoFreq[tempo]);
+        chopper.SetFreq(CalcTempFreq(tempo));
     }
 
     if(pod.button3.RisingEdge())
+    {
+        if(--tempo >= TEMPO_MIN)
+            tempo = TEMPO_MIN;
+
+        chopper.SetFreq(CalcTempFreq(tempo));
+    }
+
+    if(pod.button4.RisingEdge())
         chopper.Reset();
 }
 
@@ -138,7 +147,7 @@ void UpdateEncoder(void)
 
 void InitSynth(void)
 {
-    tempo      = 1; // 120 BPM
+    tempo      = 120; // 120 BPM
     active     = false;
     oldk1      = 0;
     fChopperPw = 0.3f;
@@ -157,7 +166,7 @@ void InitSynth(void)
 
     float sample_rate = pod.AudioSampleRate();
     chopper.Init(sample_rate);
-    chopper.SetFreq(tempoFreq[tempo]);
+    chopper.SetFreq(CalcTempFreq(tempo));
     chopper.SetAmp(1.0f);
     chopper.SetPw(fChopperPw);
 
@@ -167,6 +176,18 @@ void InitSynth(void)
     pod.seed.StartLog(false);
 
     util.BlinkLED(WHITE);
+}
+
+/*
+  Calculates the tempo frequency in Hz for a given BPM 
+  http://bradthemad.org/guitar/tempo_explanation.php
+  Freq(Hz) = BPM / 60
+  120 BPM = 2 Hz
+*/
+float CalcTempFreq(uint8_t tempo)
+{
+    float freq = tempo / 60.0f;
+    return freq;
 }
 
 int main(void)
