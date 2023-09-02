@@ -52,13 +52,10 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
 
         if(active)
         {
-            gate = chopper.Process();
+            gate = chopper.Process4();
         }
 
-        // left out
-        out[i] = inl * gate;
-
-        // right out
+        out[i]     = inl * gate;
         out[i + 1] = inr * gate;
     }
 }

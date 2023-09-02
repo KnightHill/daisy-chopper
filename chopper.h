@@ -80,6 +80,7 @@ class Chopper
     */
     float Process();
     float Process4();
+    float Process8();
 
 
     /** Adds a value 0.0-1.0 (mapped to 0.0-TWO_PI) to the current phase. Useful for PM and "FM" synthesis.
