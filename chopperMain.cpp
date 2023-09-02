@@ -29,6 +29,7 @@ bool ConditionalParameter(float  oldVal,
 void UpdateKnobs(void);
 void UpdateLEDs(void);
 void UpdateButtons(void);
+void UpdateEncoder(void);
 void InitSynth(void);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
@@ -39,6 +40,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
     pod.ProcessDigitalControls();
 
     UpdateButtons();
+    UpdateEncoder();
     UpdateKnobs();
     UpdateLEDs();
 
@@ -76,22 +78,16 @@ void UpdateButtons(void)
 
     if(pod.button2.RisingEdge())
     {
-        chopper.NextPattern();
-    }
-
-    if(pod.button3.RisingEdge())
-    {
-        chopper.Reset();
-    }
-
-    if(pod.button4.RisingEdge())
-    {
         if(++tempo >= TEMPO_MAX)
         {
             tempo = 0;
         }
 
         chopper.SetFreq(tempoFreq[tempo]);
+    }
+    if(pod.button3.RisingEdge())
+    {
+        chopper.Reset();
     }
 }
 
@@ -135,6 +131,20 @@ void UpdateKnobs(void)
     }
 
     oldk1 = k1;
+}
+
+void UpdateEncoder(void)
+{
+    //if(pod.encoder.RisingEdge()) {}
+    int32_t inc = pod.encoder.Increment();
+    if(inc == 1)
+    {
+        chopper.NextPattern();
+    }
+    else if(inc == -1)
+    {
+        chopper.PrevPattern();
+    }
 }
 
 void InitSynth(void)
