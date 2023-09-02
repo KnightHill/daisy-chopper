@@ -6,22 +6,21 @@
 namespace bytebeat
 {
 
-struct RGB
-{
-    float R, G, B;
-};
-
 class Utilities
 {
   public:
     Utilities() {}
     void Init(daisy::DaisyPod *);
-    void BlinkLED(RGB rgb, unsigned long delay = 140, size_t number = 3);
+    void BlinkLED(float         r      = 1.0f,
+                  float         g      = 1.0f,
+                  float         b      = 1.0f,
+                  unsigned long delay  = 140,
+                  size_t        number = 3);
 
   private:
     daisy::DaisyPod *pod_;
 
-    void BlinkLEDColor(RGB rgb, unsigned long delay);
+    void BlinkLEDColor(float r, float g, float b, unsigned long delay);
 };
 
 

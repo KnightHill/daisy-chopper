@@ -15,6 +15,10 @@ static Chopper   chopper;
 static Utilities util;
 static Parameter chopperPw;
 
+// http://bradthemad.org/guitar/tempo_explanation.php
+// Freq(Hz) = BPM / 60
+// 120 BPM = 2 Hz
+
 static uint8_t tempo; // 0 - 80 BPM, 1 - 120 BPM, 2 - 140 BPM
 static float   tempoFreq[TEMPO_MAX] = {1.333333f, 2.0f, 2.333333f};
 static bool    active;
@@ -79,16 +83,13 @@ void UpdateButtons(void)
     if(pod.button2.RisingEdge())
     {
         if(++tempo >= TEMPO_MAX)
-        {
             tempo = 0;
-        }
 
         chopper.SetFreq(tempoFreq[tempo]);
     }
+
     if(pod.button3.RisingEdge())
-    {
         chopper.Reset();
-    }
 }
 
 void UpdateLEDs(void)
@@ -114,9 +115,7 @@ void UpdateKnobs(void)
     float k1 = pod.knob1.Process();
 
     if(ConditionalParameter(oldk1, k1, fChopperPw, chopperPw.Process()))
-    {
         chopper.SetPw(fChopperPw);
-    }
 
     oldk1 = k1;
 }
@@ -126,24 +125,16 @@ void UpdateEncoder(void)
     //if(pod.encoder.RisingEdge()) {}
     int32_t inc = pod.encoder.Increment();
     if(inc == 1)
-    {
         chopper.NextPattern();
-    }
     else if(inc == -1)
-    {
         chopper.PrevPattern();
-    }
 }
 
 void InitSynth(void)
 {
-    tempo  = 0;
-    active = false;
-    oldk1  = 0;
-
-    // http://bradthemad.org/guitar/tempo_explanation.php
-    // Freq(Hz) = BPM / 60
-    // 120 BPM = 2 Hz
+    tempo      = 1; // 120 BPM
+    active     = false;
+    oldk1      = 0;
     fChopperPw = 0.3f;
 
     pod.Init();
@@ -173,7 +164,7 @@ void InitSynth(void)
     pod.seed.StartLog(false);
     // System::Delay(250);
 
-    util.BlinkLED({1, 1, 1});
+    util.BlinkLED(WHITE);
 }
 
 int main(void)

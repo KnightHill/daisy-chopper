@@ -9,18 +9,22 @@ void Utilities::Init(DaisyPod *pod)
     pod_ = pod;
 }
 
-void Utilities::BlinkLEDColor(RGB rgb, unsigned long delay)
+void Utilities::BlinkLEDColor(float r, float g, float b, unsigned long delay)
 {
-    pod_->led1.Set(rgb.R, rgb.G, rgb.B);
+    pod_->led1.Set(r, g, b);
     pod_->UpdateLeds();
     System::Delay(delay);
 }
 
-void Utilities::BlinkLED(RGB rgb, unsigned long delay, size_t number)
+void Utilities::BlinkLED(float         r,
+                         float         g,
+                         float         b,
+                         unsigned long delay,
+                         size_t        number)
 {
     for(size_t i = 0; i < number; i++)
     {
-        BlinkLEDColor(rgb, delay);
-        BlinkLEDColor({0, 0, 0}, delay);
+        BlinkLEDColor(r, g, b, delay);
+        BlinkLEDColor(0, 0, 0, delay);
     }
 }
