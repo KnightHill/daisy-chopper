@@ -37,7 +37,6 @@ void Chopper::Reset(float _phase)
 {
     phase_        = _phase;
     pattern_step_ = 0;
-    //tick_         = 0;
 }
 
 void Chopper::IncPatternStep()

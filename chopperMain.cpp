@@ -15,8 +15,8 @@ static Chopper   chopper;
 static Utilities util;
 static Parameter chopperPw;
 
-static uint8_t tempo; // 0 - 120 BPM, 1 - 140 BPM, 2 - 80 BPM
-static float   tempoFreq[TEMPO_MAX] = {2.0f, 2.333333f, 1.333333f};
+static uint8_t tempo; // 0 - 80 BPM, 1 - 120 BPM, 2 - 140 BPM
+static float   tempoFreq[TEMPO_MAX] = {1.333333f, 2.0f, 2.333333f};
 static bool    active;
 static float   fChopperPw;
 static float   oldk1;
@@ -94,21 +94,6 @@ void UpdateButtons(void)
 void UpdateLEDs(void)
 {
     pod.seed.SetLed(active);
-    /*
-    if(active)
-    {
-        switch(tempo)
-        {
-            case 0: pod.led1.Set(0.6, 0, 0); break;
-            case 1: pod.led1.Set(1.0, 0, 0); break;
-            case 2: pod.led1.Set(0.3, 0, 0); break;
-        }
-    }
-    else
-    {
-        pod.led1.Set(0, 0, 0);
-    }
-    */
 
     switch(chopper.GetCurrentPattern())
     {
