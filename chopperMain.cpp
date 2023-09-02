@@ -2,6 +2,7 @@
 #include "daisysp.h"
 #include "util.h"
 #include "chopper.h"
+#include "colors.h"
 
 using namespace daisysp;
 using namespace daisy;
@@ -123,14 +124,14 @@ void UpdateLEDs(void)
 
     switch(chopper.GetCurrentPattern())
     {
-        case 0: pod.led2.Set(1, 0, 0); break;
-        case 1: pod.led2.Set(0, 1, 0); break;
-        case 2: pod.led2.Set(0, 0, 1); break;
-        case 3: pod.led2.Set(0, 0, 0); break;
-        case 4: pod.led2.Set(1, 0, 1); break;
-        case 5: pod.led2.Set(0, 1, 1); break;
-        case 6: pod.led2.Set(1, 1, 0); break;
-        case 7: pod.led2.Set(1, 1, 1); break;
+        case 0: pod.led2.Set(RED); break;
+        case 1: pod.led2.Set(GREEN); break;
+        case 2: pod.led2.Set(BLUE); break;
+        case 3: pod.led2.Set(BLACK); break;
+        case 4: pod.led2.Set(MAGENTA); break;
+        case 5: pod.led2.Set(CYAN); break;
+        case 6: pod.led2.Set(GOLD); break;
+        case 7: pod.led2.Set(WHITE); break;
     }
     pod.UpdateLeds();
 }

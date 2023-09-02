@@ -127,21 +127,21 @@ float Chopper::Process()
     // 1/4
     if(mode_ == Quarter)
     {
-        float pphase = fmod(phase_, TWOPI_F);
+        float pphase = fmodf(phase_, TWOPI_F);
         if(pphase + phase_inc_ > TWOPI_F)
             IncPatternStep();
     }
     else if(mode_ == Eight)
     {
         // 1/8
-        float pphase = fmod(phase_, PI_F);
+        float pphase = fmodf(phase_, PI_F);
         if(pphase + phase_inc_ > PI_F)
             IncPatternStep();
     }
     else
     {
         // 1/16
-        float pphase = fmod(phase_, HALFPI_F);
+        float pphase = fmodf(phase_, HALFPI_F);
         if(pphase + phase_inc_ > HALFPI_F)
             IncPatternStep();
     }
