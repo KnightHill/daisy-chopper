@@ -44,7 +44,7 @@ void Chopper::IncPatternStep()
     if(++pattern_step_ >= PATTERN_STEPS_MAX)
         pattern_step_ = 0;
 }
-
+/*
 float Chopper::Process4()
 {
     float out;
@@ -107,6 +107,7 @@ float Chopper::Process8()
 
     return out * amp_;
 }
+*/
 
 float Chopper::Process16()
 {
