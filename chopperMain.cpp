@@ -93,6 +93,8 @@ void UpdateButtons(void)
 
 void UpdateLEDs(void)
 {
+    pod.seed.SetLed(active);
+    /*
     if(active)
     {
         switch(tempo)
@@ -106,6 +108,7 @@ void UpdateLEDs(void)
     {
         pod.led1.Set(0, 0, 0);
     }
+    */
 
     switch(chopper.GetCurrentPattern())
     {

@@ -34,5 +34,6 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 | Button 3 | Reset pattern step | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
-| LED 1 | Slicer On/Off, Intensity shows tempo | pod |
+| Seed LED | Slicer On/Off | seed |
+| LED 1 | N/A | pod |
 | LED 2 | Current pattern | pod |
