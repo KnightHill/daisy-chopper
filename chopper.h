@@ -19,13 +19,6 @@ class Chopper
     void IncPatternStep(void);
 
   public:
-    enum Mode
-    {
-        Quarter,
-        Eight,
-        Sixteen
-    };
-
     Chopper() {}
     ~Chopper() {}
 
@@ -79,9 +72,6 @@ class Chopper
     /** Processes the waveform to be generated, returning one sample. This should be called once per sample period.
     */
     float Process();
-    float Process4();
-    float Process8();
-    float Process16();
 
 
     /** Adds a value 0.0-1.0 (mapped to 0.0-TWO_PI) to the current phase. Useful for PM and "FM" synthesis.
@@ -119,8 +109,10 @@ class Chopper
     float          last_out_, last_freq_;
     bool           eor_, eoc_;
     int16_t        current_pattern_, pattern_step_;
-    Mode           mode_;
-    //size_t         tick_;
+
+    float Process4(void);
+    float Process8(void);
+    float Process16(void);
 };
 
 } // namespace bytebeat

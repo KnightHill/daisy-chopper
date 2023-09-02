@@ -35,8 +35,6 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
                    AudioHandle::InterleavingOutputBuffer out,
                    size_t                                size)
 {
-    static float inl, inr;
-
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
 
@@ -46,18 +44,9 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
 
     for(size_t i = 0; i < size; i += 2)
     {
-        inl = in[i];
-        inr = in[i + 1];
-
-        float gate = 1.0f;
-
-        if(active)
-        {
-            gate = chopper.Process16();
-        }
-
-        out[i]     = inl * gate;
-        out[i + 1] = inr * gate;
+        const float gate = active ? chopper.Process() : 1.0f;
+        out[i]           = gate * in[i];
+        out[i + 1]       = gate * in[i + 1];
     }
 }
 
