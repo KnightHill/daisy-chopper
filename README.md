@@ -12,8 +12,6 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 # Patterns
 
-## 1/4th note patterns
-
 | Pattern No | LED 2 Color | Step 1 | Step 2 | Step 3 | Step 4 |
 | --- | --- | --- | --- | --- | --- |
 | 1 | RED | 1 | 1 | 1 | 1 |
@@ -30,10 +28,10 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 | Control | Description | Comment |
 | --- | --- | --- |
+| Encoder | Change slicer pattern | pod |
 | Button 1 | Slicer On/Off | pod |
-| Button 2 | Change slicer pattern | pod |
+| Button 2 | Set tempo (120 -> 140 -> 80 BPM) | pod |
 | Button 3 | Reset pattern step | basic expansion board |
-| Button 4 | Set tempo (120 -> 140 -> 80 BPM) | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
 | LED 1 | Slicer On/Off, Intensity shows tempo | pod |
