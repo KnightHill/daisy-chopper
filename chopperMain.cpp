@@ -53,7 +53,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
 
         if(active)
         {
-            gate = chopper.Process4();
+            gate = chopper.Process16();
         }
 
         out[i]     = inl * gate;
