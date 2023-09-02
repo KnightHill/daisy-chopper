@@ -178,16 +178,14 @@ void InitSynth(void)
     util.BlinkLED(WHITE);
 }
 
-/*
-  Calculates the tempo frequency in Hz for a given BPM 
+/** Calculates the tempo frequency in Hz for a given BPM 
   http://bradthemad.org/guitar/tempo_explanation.php
   Freq(Hz) = BPM / 60
   120 BPM = 2 Hz
 */
 float CalcTempFreq(uint8_t tempo)
 {
-    float freq = tempo / 60.0f;
-    return freq;
+    return tempo / 60.0f;
 }
 
 int main(void)

@@ -2,11 +2,7 @@
 
 A simple wave slicer for E/S Daisy POD.
 
-Default tempo is set to 120 BPM (2Hz). Tempo settings are:
-
-- 80 BPM 
-- 120 BPM 
-- 140 BPM 
+Default tempo is set to 120 BPM (2Hz). Tempo's range is between 60 and 180 BPM.
 
 Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightHill/daisy-basic-expander).
 
