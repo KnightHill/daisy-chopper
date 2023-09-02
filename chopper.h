@@ -79,6 +79,7 @@ class Chopper
     /** Processes the waveform to be generated, returning one sample. This should be called once per sample period.
     */
     float Process();
+    float Process4();
 
 
     /** Adds a value 0.0-1.0 (mapped to 0.0-TWO_PI) to the current phase. Useful for PM and "FM" synthesis.

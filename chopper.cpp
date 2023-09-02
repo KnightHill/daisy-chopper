@@ -51,6 +51,32 @@ void Chopper::IncPatternStep()
         pattern_step_ = 0;
 }
 
+float Chopper::Process4()
+{
+    float out;
+
+    if(phase_ < pw_rad_)
+        out = Patterns[current_pattern_][pattern_step_] ? 1.0f : 0.0f;
+    else
+        out = 0;
+
+    phase_ += phase_inc_;
+
+    if(phase_ > TWOPI_F)
+    {
+        phase_ -= TWOPI_F;
+        eoc_ = true;
+        IncPatternStep();
+    }
+    else
+    {
+        eoc_ = false;
+    }
+    eor_ = (phase_ - phase_inc_ < PI_F && phase_ >= PI_F);
+
+    return out * amp_;
+}
+
 float Chopper::Process()
 {
     float out;
