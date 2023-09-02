@@ -1,5 +1,6 @@
 build
 .vscode
 bbConfigReader/cfg_reader
-bbConfigReader/main.o
+bbConfigReader/*.o
+test/*.o
 
