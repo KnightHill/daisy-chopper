@@ -9,6 +9,7 @@ using namespace daisy;
 using namespace bytebeat;
 
 #define TEMPO_MIN 60
+#define TEMPO_DEFAUT 120
 #define TEMPO_MAX 180
 
 static DaisyPod  pod;
@@ -89,7 +90,7 @@ void UpdateButtons(void)
 
     if(pod.button2.RisingEdge())
     {
-        if(++tempo >= TEMPO_MAX)
+        if(++tempo > TEMPO_MAX)
             tempo = TEMPO_MAX;
 
         chopper.SetFreq(CalcTempFreq(tempo));
@@ -97,7 +98,7 @@ void UpdateButtons(void)
 
     if(pod.button3.RisingEdge())
     {
-        if(--tempo >= TEMPO_MIN)
+        if(--tempo < TEMPO_MIN)
             tempo = TEMPO_MIN;
 
         chopper.SetFreq(CalcTempFreq(tempo));
@@ -137,7 +138,12 @@ void UpdateKnobs(void)
 
 void UpdateEncoder(void)
 {
-    //if(pod.encoder.RisingEdge()) {}
+    if(pod.encoder.RisingEdge())
+    {
+        tempo = TEMPO_DEFAUT;
+        chopper.SetFreq(CalcTempFreq(tempo));
+    }
+
     int32_t inc = pod.encoder.Increment();
     if(inc == 1)
         chopper.NextPattern();
@@ -147,7 +153,7 @@ void UpdateEncoder(void)
 
 void InitSynth(void)
 {
-    tempo      = 120; // 120 BPM
+    tempo      = TEMPO_DEFAUT; // 120 BPM
     active     = false;
     oldk1      = 0;
     fChopperPw = 0.3f;

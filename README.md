@@ -24,7 +24,8 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 | Control | Description | Comment |
 | --- | --- | --- |
-| Encoder | Change slicer pattern | pod |
+| Encoder Turn | Change slicer pattern | pod |
+| Encoder Press | Set tempo to 120 BPM | pod |
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Increase tempo | pod |
 | Button 3 | Decrease tempo | pod |
