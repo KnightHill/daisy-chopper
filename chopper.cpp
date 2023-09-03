@@ -41,72 +41,26 @@ void Chopper::IncPatternStep()
   if (++pattern_step_ >= PATTERN_STEPS_MAX)
     pattern_step_ = 0;
 }
-/*
-float Chopper::Process4()
+
+void Chopper::NextPattern(bool reset)
 {
-    float out;
-
-    if(phase_ < pw_rad_)
-        out = Patterns[current_pattern_][pattern_step_] ? 1.0f : 0.0f;
-    else
-        out = 0;
-
-    phase_ += phase_inc_;
-
-    if(phase_ > TWOPI_F)
-    {
-        phase_ -= TWOPI_F;
-        eoc_ = true;
-        IncPatternStep();
-    }
-    else
-    {
-        eoc_ = false;
-    }
-    eor_ = (phase_ - phase_inc_ < PI_F && phase_ >= PI_F);
-
-    return out * amp_;
+  current_pattern_++;
+  if (current_pattern_ >= PATTERNS_MAX)
+    current_pattern_ = 0;
+  if (reset)
+    pattern_step_ = 0;
 }
 
-float Chopper::Process8()
+void Chopper::PrevPattern(bool reset)
 {
-    float out;
-
-    if(phase_ < PI_F)
-    {
-        if(phase_ < pw_rad_ / 2.0f)
-            out = Patterns[current_pattern_][pattern_step_] ? 1.0f : 0.0f;
-        else
-            out = 0;
-    }
-    else
-    {
-        if(phase_ - PI_F < pw_rad_ / 2.0f)
-            out = Patterns[current_pattern_][pattern_step_ + 1] ? 1.0f : 0.0f;
-        else
-            out = 0;
-    }
-
-    phase_ += phase_inc_;
-
-    if(phase_ > TWOPI_F)
-    {
-        phase_ -= TWOPI_F;
-        eoc_ = true;
-        IncPatternStep();
-        IncPatternStep();
-    }
-    else
-    {
-        eoc_ = false;
-    }
-    eor_ = (phase_ - phase_inc_ < PI_F && phase_ >= PI_F);
-
-    return out * amp_;
+  current_pattern_--;
+  if (current_pattern_ < 0)
+    current_pattern_ = PATTERNS_MAX - 1;
+  if (reset)
+    pattern_step_ = 0;
 }
-*/
 
-float Chopper::Process16()
+float Chopper::Process()
 {
   float out;
   float quadrant_index = floorf(phase_ / HALFPI_F);
@@ -130,7 +84,5 @@ float Chopper::Process16()
 
   return out * amp_;
 }
-
-float Chopper::Process() { return Process16(); }
 
 float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }

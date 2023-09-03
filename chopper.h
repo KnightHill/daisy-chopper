@@ -86,28 +86,12 @@ public:
   /** Adds a value 0.0-1.0 (mapped to 0.0-TWO_PI) to the current phase. Useful for PM and "FM" synthesis.
    */
   void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
+
   /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
    */
   void Reset(float _phase = 0.0f);
-
-  void NextPattern(bool reset = false)
-  {
-    current_pattern_++;
-    if (current_pattern_ >= PATTERNS_MAX)
-      current_pattern_ = 0;
-    if (reset)
-      pattern_step_ = 0;
-  }
-
-  void PrevPattern(bool reset = false)
-  {
-    current_pattern_--;
-    if (current_pattern_ < 0)
-      current_pattern_ = PATTERNS_MAX - 1;
-    if (reset)
-      pattern_step_ = 0;
-  }
-
+  void NextPattern(bool reset = false);
+  void PrevPattern(bool reset = false);
   inline int16_t GetCurrentPattern() { return current_pattern_; }
 
 private:
@@ -118,10 +102,6 @@ private:
   float last_out_, last_freq_;
   bool eor_, eoc_;
   int16_t current_pattern_, pattern_step_;
-
-  // float Process4(void);
-  // float Process8(void);
-  float Process16(void);
 };
 
 } // namespace bytebeat
