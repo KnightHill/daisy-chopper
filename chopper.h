@@ -8,6 +8,19 @@
 namespace bytebeat
 {
 
+enum NoteDuration
+{
+    D4, // quarter
+    D8, // eigth
+    D16 // sixteenth
+};
+
+struct Note
+{
+    bool         active;
+    NoteDuration duration;
+};
+
 #define PATTERN_STEPS_MAX 16
 #define PATTERNS_MAX 8
 
