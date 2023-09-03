@@ -17,5 +17,4 @@ namespace bytebeat
 
 } // namespace bytebeat
 
-
 #endif
