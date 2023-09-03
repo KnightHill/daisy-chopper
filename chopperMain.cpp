@@ -8,7 +8,9 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define TEMPO_MAX 3
+#define TEMPO_MIN 60
+#define TEMPO_DEFAUT 120
+#define TEMPO_MAX 180
 
 static DaisyPod  pod;
 static Chopper   chopper;
@@ -19,22 +21,23 @@ static Parameter chopperPw;
 // Freq(Hz) = BPM / 60
 // 120 BPM = 2 Hz
 
-static uint8_t tempo; // 0 - 80 BPM, 1 - 120 BPM, 2 - 140 BPM
-static float   tempoFreq[TEMPO_MAX] = {1.333333f, 2.0f, 2.333333f};
+static uint8_t tempo;
 static bool    active;
 static float   fChopperPw;
 static float   oldk1;
 
 // prototypes
-bool ConditionalParameter(float  oldVal,
-                          float  newVal,
-                          float &param,
-                          float  update);
-void UpdateKnobs(void);
-void UpdateLEDs(void);
-void UpdateButtons(void);
-void UpdateEncoder(void);
-void InitSynth(void);
+bool  ConditionalParameter(float  oldVal,
+                           float  newVal,
+                           float &param,
+                           float  update);
+void  UpdateKnobs(void);
+void  UpdateLEDs(void);
+void  UpdateButtons(void);
+void  UpdateEncoder(void);
+void  Controls(void);
+void  InitSynth(void);
+float CalcTempFreq(uint8_t tempo);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
                    AudioHandle::InterleavingOutputBuffer out,
@@ -42,18 +45,23 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer  in,
 {
     pod.ProcessAnalogControls();
     pod.ProcessDigitalControls();
-
-    UpdateButtons();
-    UpdateEncoder();
-    UpdateKnobs();
-    UpdateLEDs();
+    Controls();
 
     for(size_t i = 0; i < size; i += 2)
     {
         const float gate = active ? chopper.Process() : 1.0f;
-        out[i]           = gate * in[i];
-        out[i + 1]       = gate * in[i + 1];
+
+        out[i]     = gate * in[i];
+        out[i + 1] = gate * in[i + 1];
     }
+}
+
+void Controls(void)
+{
+    UpdateButtons();
+    UpdateEncoder();
+    UpdateKnobs();
+    UpdateLEDs();
 }
 
 // Updates values if knob had changed
@@ -82,13 +90,21 @@ void UpdateButtons(void)
 
     if(pod.button2.RisingEdge())
     {
-        if(++tempo >= TEMPO_MAX)
-            tempo = 0;
+        if(++tempo > TEMPO_MAX)
+            tempo = TEMPO_MAX;
 
-        chopper.SetFreq(tempoFreq[tempo]);
+        chopper.SetFreq(CalcTempFreq(tempo));
     }
 
     if(pod.button3.RisingEdge())
+    {
+        if(--tempo < TEMPO_MIN)
+            tempo = TEMPO_MIN;
+
+        chopper.SetFreq(CalcTempFreq(tempo));
+    }
+
+    if(pod.button4.RisingEdge())
         chopper.Reset();
 }
 
@@ -122,7 +138,12 @@ void UpdateKnobs(void)
 
 void UpdateEncoder(void)
 {
-    //if(pod.encoder.RisingEdge()) {}
+    if(pod.encoder.RisingEdge())
+    {
+        tempo = TEMPO_DEFAUT;
+        chopper.SetFreq(CalcTempFreq(tempo));
+    }
+
     int32_t inc = pod.encoder.Increment();
     if(inc == 1)
         chopper.NextPattern();
@@ -132,7 +153,7 @@ void UpdateEncoder(void)
 
 void InitSynth(void)
 {
-    tempo      = 1; // 120 BPM
+    tempo      = TEMPO_DEFAUT; // 120 BPM
     active     = false;
     oldk1      = 0;
     fChopperPw = 0.3f;
@@ -151,20 +172,26 @@ void InitSynth(void)
 
     float sample_rate = pod.AudioSampleRate();
     chopper.Init(sample_rate);
-    chopper.SetFreq(tempoFreq[tempo]);
+    chopper.SetFreq(CalcTempFreq(tempo));
     chopper.SetAmp(1.0f);
     chopper.SetPw(fChopperPw);
 
     chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
 
     // initialize the logger
-    // Debug on Linux:
-    // cu -l /dev/ttyACM0
-    // screen /dev/ttyACM0
     pod.seed.StartLog(false);
-    // System::Delay(250);
 
     util.BlinkLED(WHITE);
+}
+
+/** Calculates the tempo frequency in Hz for a given BPM 
+  http://bradthemad.org/guitar/tempo_explanation.php
+  Freq(Hz) = BPM / 60
+  120 BPM = 2 Hz
+*/
+float CalcTempFreq(uint8_t tempo)
+{
+    return tempo / 60.0f;
 }
 
 int main(void)
