@@ -1,7 +1,8 @@
-#include "chopper.h"
-#include "colors.h"
 #include "daisy_pod.h"
 #include "daisysp.h"
+
+#include "chopper.h"
+#include "colors.h"
 #include "util.h"
 
 using namespace daisysp;

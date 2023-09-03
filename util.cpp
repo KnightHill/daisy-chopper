@@ -1,5 +1,5 @@
-#include "util.h"
 #include "daisy_pod.h"
+#include "util.h"
 
 using namespace daisy;
 using namespace bytebeat;
