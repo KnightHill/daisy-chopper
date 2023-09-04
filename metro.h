@@ -6,6 +6,9 @@
 
 namespace bytebeat
 {
+
+typedef void (*MetroCallback)(uint8_t quadrant);
+
 /** Creates a clock signal at a specific frequency.
  */
 class Metro16
@@ -14,7 +17,7 @@ public:
   Metro16() {}
   ~Metro16() {}
   void Init(float freq, float sample_rate);
-  uint8_t Process();
+  bool Process(MetroCallback callback);
 
   /** resets phase to 0
    */

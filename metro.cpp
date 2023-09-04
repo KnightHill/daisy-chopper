@@ -13,14 +13,16 @@ void Metro16::Init(float freq, float sample_rate)
   quadrant_index_ = 0.0f;
 }
 
-uint8_t Metro16::Process()
+bool Metro16::Process(MetroCallback callback)
 {
   float quadrant_index = floorf(phs_ / HALFPI_F);
 
   if (quadrant_index != quadrant_index_) {
-    // callback
+    if (callback)
+      callback(quadrant_index);
+
     quadrant_index_ = quadrant_index;
-    return 1;
+    return true;
   }
 
   phs_ += phs_inc_;
@@ -29,7 +31,7 @@ uint8_t Metro16::Process()
     // return 1;
   }
 
-  return 0;
+  return false;
 }
 
 void Metro16::SetFreq(float freq)
