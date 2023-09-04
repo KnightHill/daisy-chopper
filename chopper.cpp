@@ -60,22 +60,56 @@ void Chopper::PrevPattern(bool reset)
     pattern_step_ = 0;
 }
 
+uint16_t Chopper::GetStepIncrement(NoteDuration duration)
+{
+  switch (duration) {
+  case D4:
+    return 1;
+  case D8:
+    return 2;
+  case D16:
+  default:
+    return 4;
+  }
+}
+
 float Chopper::Process()
 {
   float out;
   float quadrant_index = floorf(phase_ / HALFPI_F);
+  Note note = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index];
 
-  if (phase_ - (HALFPI_F * quadrant_index) < pw_rad_ / 4.0f)
-    out = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index].active ? 1.0f : 0.0f;
-  else
-    out = 0;
+  if (quadrant_index == 0)
+    first_note_duration_ = note.duration;
+
+  if (first_note_duration_ == D16) {
+    if (phase_ - (HALFPI_F * quadrant_index) < pw_rad_ / 4.0f)
+      out = note.active ? 1.0f : 0.0f;
+    else
+      out = 0;
+  } else if (first_note_duration_ == D8) {
+    quadrant_index /= 2.0f;
+    Note note8 = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index];
+    if (phase_ - (PI_F * quadrant_index) < pw_rad_ / 2.0f)
+      out = note8.active ? 1.0f : 0.0f;
+    else
+      out = 0;
+  } else {
+    quadrant_index /= 4.0f;
+    Note note4 = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index];
+    if (phase_ - (TWOPI_F * quadrant_index) < pw_rad_)
+      out = note4.active ? 1.0f : 0.0f;
+    else
+      out = 0;
+  }
 
   phase_ += phase_inc_;
 
   if (phase_ > TWOPI_F) {
+    uint16_t step_increment = GetStepIncrement(first_note_duration_);
     phase_ -= TWOPI_F;
     eoc_ = true;
-    for (uint16_t i = 0; i < 4; i++)
+    for (uint16_t i = 0; i < step_increment; i++)
       IncPatternStep();
   } else {
     eoc_ = false;
