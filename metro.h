@@ -17,7 +17,7 @@ public:
   Metro16() {}
   ~Metro16() {}
   void Init(float freq, float sample_rate);
-  bool Process(MetroCallback callback);
+  bool Process(MetroCallback callback = NULL);
 
   /** resets phase to 0
    */
