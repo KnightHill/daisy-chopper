@@ -8,6 +8,9 @@
 namespace bytebeat
 {
 
+#define PATTERN_STEPS_MAX 16
+#define PATTERNS_MAX 8
+
 enum NoteDuration {
   D4, // quarter
   D8, // eigth
@@ -19,15 +22,18 @@ struct Note {
   NoteDuration duration;
 };
 
-#define PATTERN_STEPS_MAX 16
-#define PATTERNS_MAX 8
+struct Pattern {
+  uint8_t length;
+  Note notes[PATTERN_STEPS_MAX];
+};
 
 class Chopper
 {
 private:
-  static Note Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX];
+  // static Note Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX];
+  static Pattern Patterns[PATTERNS_MAX];
 
-  void IncPatternStep(void);
+  void IncPatternStep(uint8_t length);
   uint16_t GetStepIncrement(NoteDuration duration);
 
 public:

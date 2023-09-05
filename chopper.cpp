@@ -4,15 +4,18 @@ using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 
-Note Chopper::Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX] = {
-    {{1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}},
-    {{1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}},
-    {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}},
-    {{0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}},
-    {{1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}},
-    {{1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}},
-    {{1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}},
-    {{0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}}};
+Pattern Chopper::Patterns[PATTERNS_MAX] = {
+    {16, {{1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}}},
+    {16, {{1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}}},
+    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}}},
+    {16, {{0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}}},
+    {16, {{1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}}},
+    {16, {{1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}}},
+    {16, {{1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}}},
+    {16, {{0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}}}
+    //{{1, D4}, {1, D4}, {1, D4}, {1, D4}},
+    //{{1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}}
+};
 
 void Chopper::Init(float sample_rate)
 {
@@ -36,9 +39,9 @@ void Chopper::Reset(float _phase)
   pattern_step_ = 0;
 }
 
-void Chopper::IncPatternStep()
+void Chopper::IncPatternStep(uint8_t length)
 {
-  if (++pattern_step_ >= PATTERN_STEPS_MAX)
+  if (++pattern_step_ >= length)
     pattern_step_ = 0;
 }
 
@@ -77,7 +80,7 @@ float Chopper::Process()
 {
   float out;
   float quadrant_index = floorf(phase_ / HALFPI_F);
-  Note note = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index];
+  Note note = Patterns[current_pattern_].notes[pattern_step_ + (uint16_t)quadrant_index];
 
   if (quadrant_index == 0)
     first_note_duration_ = note.duration;
@@ -89,14 +92,14 @@ float Chopper::Process()
       out = 0;
   } else if (first_note_duration_ == D8) {
     quadrant_index /= 2.0f;
-    Note note8 = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index];
+    Note note8 = Patterns[current_pattern_].notes[pattern_step_ + (uint16_t)quadrant_index];
     if (phase_ - (PI_F * quadrant_index) < pw_rad_ / 2.0f)
       out = note8.active ? 1.0f : 0.0f;
     else
       out = 0;
   } else {
     quadrant_index /= 4.0f;
-    Note note4 = Patterns[current_pattern_][pattern_step_ + (uint16_t)quadrant_index];
+    Note note4 = Patterns[current_pattern_].notes[pattern_step_ + (uint16_t)quadrant_index];
     if (phase_ - (TWOPI_F * quadrant_index) < pw_rad_)
       out = note4.active ? 1.0f : 0.0f;
     else
@@ -110,7 +113,7 @@ float Chopper::Process()
     phase_ -= TWOPI_F;
     eoc_ = true;
     for (uint16_t i = 0; i < step_increment; i++)
-      IncPatternStep();
+      IncPatternStep(Patterns[current_pattern_].length);
   } else {
     eoc_ = false;
   }
