@@ -7,7 +7,7 @@
 namespace bytebeat
 {
 
-typedef void (*MetroCallback)(uint8_t quadrant);
+typedef void (*MetroCallback)(float phase, uint8_t quadrant);
 
 /** Creates a clock signal at a specific frequency.
  */

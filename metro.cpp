@@ -19,7 +19,7 @@ bool Metro16::Process(MetroCallback callback)
 
   if (quadrant_index != quadrant_index_) {
     if (callback)
-      callback(quadrant_index);
+      callback(phase_, quadrant_index);
 
     quadrant_index_ = quadrant_index;
     return true;
