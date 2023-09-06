@@ -7,15 +7,15 @@ using namespace bytebeat;
 void Metro16::Init(float freq, float sample_rate)
 {
   freq_ = freq;
-  phs_ = 0.0f;
+  phase_ = 0.0f;
   sample_rate_ = sample_rate;
-  phs_inc_ = (TWOPI_F * freq_) / sample_rate_;
+  phase_inc_ = (TWOPI_F * freq_) / sample_rate_;
   quadrant_index_ = 0.0f;
 }
 
 bool Metro16::Process(MetroCallback callback)
 {
-  float quadrant_index = floorf(phs_ / HALFPI_F);
+  float quadrant_index = floorf(phase_ / HALFPI_F);
 
   if (quadrant_index != quadrant_index_) {
     if (callback)
@@ -25,9 +25,9 @@ bool Metro16::Process(MetroCallback callback)
     return true;
   }
 
-  phs_ += phs_inc_;
-  if (phs_ >= TWOPI_F) {
-    phs_ -= TWOPI_F;
+  phase_ += phase_inc_;
+  if (phase_ >= TWOPI_F) {
+    phase_ -= TWOPI_F;
     // return 1;
   }
 
@@ -37,5 +37,5 @@ bool Metro16::Process(MetroCallback callback)
 void Metro16::SetFreq(float freq)
 {
   freq_ = freq;
-  phs_inc_ = (TWOPI_F * freq_) / sample_rate_;
+  phase_inc_ = (TWOPI_F * freq_) / sample_rate_;
 }

@@ -21,13 +21,13 @@ public:
 
   /** resets phase to 0
    */
-  inline void Reset() { quadrant_index_ = phs_ = 0.0f; }
+  inline void Reset() { quadrant_index_ = phase_ = 0.0f; }
   void SetFreq(float freq);
   inline float GetFreq() { return freq_; }
 
 private:
   float freq_;
-  float phs_, sample_rate_, phs_inc_;
+  float phase_, sample_rate_, phase_inc_;
   float quadrant_index_;
 };
 } // namespace bytebeat
