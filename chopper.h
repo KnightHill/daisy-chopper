@@ -96,8 +96,8 @@ public:
   /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
    */
   void Reset(float _phase = 0.0f);
-  void NextPattern(bool reset = false);
-  void PrevPattern(bool reset = false);
+  void NextPattern(bool reset = true);
+  void PrevPattern(bool reset = true);
   inline int16_t GetCurrentPattern() { return current_pattern_; }
 
 private:
