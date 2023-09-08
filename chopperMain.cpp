@@ -2,7 +2,7 @@
 #include "daisysp.h"
 
 #include "chopper.h"
-#include "metro.h"
+// #include "metro.h"
 #include "colors.h"
 #include "util.h"
 
@@ -16,7 +16,7 @@ using namespace bytebeat;
 
 static DaisyPod pod;
 static Chopper chopper;
-static Metro16 metro;
+// static Metro16 metro;
 static Utilities util;
 static Parameter chopperPw;
 
@@ -187,7 +187,7 @@ void InitSynth(void)
 
   chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
 
-  metro.Init(CalcTempFreq(tempo), sample_rate, callback);
+  // metro.Init(CalcTempFreq(tempo), sample_rate, callback);
 
   // initialize the logger
   pod.seed.StartLog(false);
