@@ -11,7 +11,7 @@ using namespace daisy;
 using namespace bytebeat;
 
 #define TEMPO_MIN 60
-#define TEMPO_DEFAUT 120
+#define TEMPO_DEFAUT 80
 #define TEMPO_MAX 180
 
 static DaisyPod pod;
@@ -46,7 +46,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    metro.Process();
+    // metro.Process();
 
     const float gate = active ? chopper.Process() : 1.0f;
 
@@ -115,13 +115,13 @@ void UpdateLEDs(void)
     pod.led2.Set(BLUE);
     break;
   case 3:
-    pod.led2.Set(BLACK);
-    break;
-  case 4:
     pod.led2.Set(MAGENTA);
     break;
-  case 5:
+  case 4:
     pod.led2.Set(CYAN);
+    break;
+  case 5:
+    pod.led2.Set(BLACK);
     break;
   case 6:
     pod.led2.Set(GOLD);
