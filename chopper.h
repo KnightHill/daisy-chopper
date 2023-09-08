@@ -34,7 +34,6 @@ private:
   static Pattern Patterns[PATTERNS_MAX];
 
   void IncPatternStep(uint8_t length);
-  uint16_t GetStepIncrement(NoteDuration duration);
 
 public:
   Chopper() {}
@@ -109,8 +108,8 @@ private:
   float last_out_, last_freq_;
   bool eor_, eoc_;
   int16_t current_pattern_, pattern_step_;
-
-  NoteDuration first_note_duration_;
+  int16_t old_quadrant_index_;
+  Note note_;
 };
 
 } // namespace bytebeat
