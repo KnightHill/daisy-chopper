@@ -126,9 +126,9 @@ float Chopper::Process()
   phase_ += phase_inc_;
 
   if (phase_ > TWOPI_F) {
-    uint16_t step_increment = GetStepIncrement(first_note_duration_);
     phase_ -= TWOPI_F;
     eoc_ = true;
+    uint16_t step_increment = GetStepIncrement(first_note_duration_);
     for (uint16_t i = 0; i < step_increment; i++)
       IncPatternStep(Patterns[current_pattern_].length);
   } else {

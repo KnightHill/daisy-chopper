@@ -2,6 +2,7 @@
 #include "daisysp.h"
 
 #include "chopper.h"
+#include "metro.h"
 #include "colors.h"
 #include "util.h"
 
@@ -15,6 +16,7 @@ using namespace bytebeat;
 
 static DaisyPod pod;
 static Chopper chopper;
+static Metro16 metro;
 static Utilities util;
 static Parameter chopperPw;
 
@@ -44,6 +46,8 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
+    metro.Process();
+
     const float gate = active ? chopper.Process() : 1.0f;
 
     out[i] = gate * in[i];
@@ -153,6 +157,14 @@ void UpdateEncoder(void)
     chopper.PrevPattern();
 }
 
+volatile uint8_t counter = 0;
+
+void callback(float phase, uint8_t quadrant)
+{
+  pod.seed.SetLed(counter % 2);
+  counter++;
+}
+
 void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
@@ -163,13 +175,6 @@ void InitSynth(void)
   pod.Init();
   pod.SetAudioBlockSize(4);
 
-  /*
-  // Set sample rate to 8kHz
-  SaiHandle::Config sai_config;
-  sai_config.sr = SaiHandle::Config::SampleRate::SAI_8KHZ;
-  pod.SetAudioSampleRate(sai_config.sr);
-  */
-
   util.Init(&pod);
 
   float sample_rate = pod.AudioSampleRate();
@@ -179,6 +184,8 @@ void InitSynth(void)
   chopper.SetPw(fChopperPw);
 
   chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
+
+  metro.Init(CalcTempFreq(tempo), sample_rate, callback);
 
   // initialize the logger
   pod.seed.StartLog(false);
