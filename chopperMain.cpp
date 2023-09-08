@@ -159,10 +159,12 @@ void UpdateEncoder(void)
 
 volatile uint8_t counter = 0;
 
-void callback(float phase, uint8_t quadrant)
+float callback(float phase, uint8_t quadrant)
 {
   pod.seed.SetLed(counter % 2);
   counter++;
+
+  return 0;
 }
 
 void InitSynth(void)

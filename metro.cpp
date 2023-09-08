@@ -14,7 +14,7 @@ void Metro16::Init(float freq, float sample_rate, MetroCallback callback)
   callback_ = callback;
 }
 
-bool Metro16::Process()
+float Metro16::Process()
 {
   float quadrant_index = floorf(phase_ / HALFPI_F);
 
@@ -23,7 +23,7 @@ bool Metro16::Process()
       callback_(phase_, quadrant_index);
 
     quadrant_index_ = quadrant_index;
-    return true;
+    return 1.0f;
   }
 
   phase_ += phase_inc_;
@@ -32,7 +32,7 @@ bool Metro16::Process()
     // return 1;
   }
 
-  return false;
+  return 0.0f;
 }
 
 void Metro16::SetFreq(float freq)
