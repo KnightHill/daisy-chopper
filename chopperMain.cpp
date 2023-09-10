@@ -2,7 +2,6 @@
 #include "daisysp.h"
 
 #include "chopper.h"
-// #include "metro.h"
 #include "colors.h"
 #include "util.h"
 
@@ -11,12 +10,11 @@ using namespace daisy;
 using namespace bytebeat;
 
 #define TEMPO_MIN 60
-#define TEMPO_DEFAUT 80
+#define TEMPO_DEFAUT 120
 #define TEMPO_MAX 180
 
 static DaisyPod pod;
 static Chopper chopper;
-// static Metro16 metro;
 static Utilities util;
 static Parameter chopperPw;
 
@@ -46,10 +44,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    // metro.Process();
-
     const float gate = active ? chopper.Process() : 1.0f;
-
     out[i] = gate * in[i];
     out[i + 1] = gate * in[i + 1];
   }
@@ -186,8 +181,6 @@ void InitSynth(void)
   chopper.SetPw(fChopperPw);
 
   chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
-
-  // metro.Init(CalcTempFreq(tempo), sample_rate, callback);
 
   // initialize the logger
   pod.seed.StartLog(false);
