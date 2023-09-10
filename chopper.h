@@ -104,7 +104,7 @@ private:
   float CalcPhaseInc(float f);
   float amp_, freq_, pw_, pw_rad_;
   float sr_, sr_recip_;
-  volatile float phase_, phase_inc_;
+  float phase_, phase_inc_;
   float last_out_, last_freq_;
   bool eor_, eoc_;
   int16_t current_pattern_, pattern_step_;
