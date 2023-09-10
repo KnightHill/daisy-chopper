@@ -35,3 +35,10 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 | Seed LED | Slicer On/Off | seed |
 | LED 1 | N/A | pod |
 | LED 2 | Current pattern | pod |
+
+# TODO
+
+- tap tempo
+- MIDI Clock
+- EG/ADSR
+- test complex patterns (4+8+16)
