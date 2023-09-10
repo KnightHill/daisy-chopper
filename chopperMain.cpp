@@ -104,15 +104,19 @@ void UpdateLEDs(void)
     pod.led2.Set(RED);
     break;
   case 1:
+  case 8:
     pod.led2.Set(GREEN);
     break;
   case 2:
+  case 9:
     pod.led2.Set(BLUE);
     break;
   case 3:
+  case 10:
     pod.led2.Set(MAGENTA);
     break;
   case 4:
+  case 11:
     pod.led2.Set(CYAN);
     break;
   case 5:
