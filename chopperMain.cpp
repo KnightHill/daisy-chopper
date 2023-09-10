@@ -27,6 +27,18 @@ static bool active;
 static float fChopperPw;
 static float oldk1;
 
+// tap tempo vars
+const float TT_MAX_FREQ = 35;    // 30ms period
+const float TT_MIN_FREQ = 0.333; // 3s period
+
+int tt_count, TT_MAX_COUNT,
+    TT_MIN_COUNT;       // count between taps. MAX and MIN value
+bool tapping = false;   // True when user is tapping
+bool averaging = false; // True after 2nd tap
+float TT_BPS;           // Audio blocks per second
+float freq_tt;          // Frequency read from tap tempo
+bool use_tt = false;    // use tap tempo. Knob values arent read when true
+
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
 void UpdateKnobs(void);
@@ -35,7 +47,8 @@ void UpdateButtons(void);
 void UpdateEncoder(void);
 void Controls(void);
 void InitSynth(void);
-float CalcTempFreq(uint8_t tempo);
+float CalcTempoFreq(uint8_t tempo);
+uint8_t CalcFreqTempo(float freq);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
@@ -81,23 +94,53 @@ void UpdateButtons(void)
     if (++tempo > TEMPO_MAX)
       tempo = TEMPO_MAX;
 
-    chopper.SetFreq(CalcTempFreq(tempo));
+    chopper.SetFreq(CalcTempoFreq(tempo));
   }
 
   if (pod.button3.RisingEdge()) {
     if (--tempo < TEMPO_MIN)
       tempo = TEMPO_MIN;
 
-    chopper.SetFreq(CalcTempFreq(tempo));
+    chopper.SetFreq(CalcTempoFreq(tempo));
   }
 
   if (pod.button4.RisingEdge())
     chopper.Reset();
+
+  if (tapping) {
+    tt_count++;
+
+    if (pod.button5.RisingEdge() && tt_count > TT_MIN_COUNT) {
+      if (averaging)                                           // 3rd plus tap
+        freq_tt = 0.6 * (freq_tt) + 0.4 * (TT_BPS / tt_count); // Weighted Averaging
+      else {
+        // 2nd tap
+        freq_tt = TT_BPS / tt_count; // frequency = TT_BPS/tt_count
+        averaging = true;
+      }
+
+      use_tt = true;
+      chopper.SetFreq(freq_tt);
+
+      // Check if tempo is between min/max
+      tempo = CalcFreqTempo(freq_tt);
+      tt_count = 0;
+    } else if (tt_count == TT_MAX_COUNT) { // After 1/TT_MIN_FREQ seconds no tap, reset values
+      tt_count = 0;
+      tapping = false;
+      averaging = false;
+    }
+  } else if (pod.button5.RisingEdge()) // 1st tap
+  {
+    tapping = true;
+  }
 }
 
 void UpdateLEDs(void)
 {
   pod.seed.SetLed(active);
+
+  pod.led1.Set(tapping, 0, 0);
 
   switch (chopper.GetCurrentPattern()) {
   case 0:
@@ -146,7 +189,7 @@ void UpdateEncoder(void)
 {
   if (pod.encoder.RisingEdge()) {
     tempo = TEMPO_DEFAUT;
-    chopper.SetFreq(CalcTempFreq(tempo));
+    chopper.SetFreq(CalcTempoFreq(tempo));
   }
 
   int32_t inc = pod.encoder.Increment();
@@ -180,11 +223,16 @@ void InitSynth(void)
 
   float sample_rate = pod.AudioSampleRate();
   chopper.Init(sample_rate);
-  chopper.SetFreq(CalcTempFreq(tempo));
+  chopper.SetFreq(CalcTempoFreq(tempo));
   chopper.SetAmp(1.0f);
   chopper.SetPw(fChopperPw);
 
   chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
+
+  // Tap tempo
+  TT_BPS = sample_rate / pod.AudioBlockSize(); // Blocks per second = sample_rate/block_size
+  TT_MAX_COUNT = round(TT_BPS / TT_MIN_FREQ);  // tt_count = TT_BPS/frequency
+  TT_MIN_COUNT = round(TT_BPS / TT_MAX_FREQ);
 
   // initialize the logger
   pod.seed.StartLog(false);
@@ -197,7 +245,8 @@ void InitSynth(void)
   Freq(Hz) = BPM / 60
   120 BPM = 2 Hz
 */
-float CalcTempFreq(uint8_t tempo) { return tempo / 60.0f; }
+float CalcTempoFreq(uint8_t tempo) { return tempo / 60.0f; }
+uint8_t CalcFreqTempo(float freq) { return freq * 60.0f; }
 
 int main(void)
 {

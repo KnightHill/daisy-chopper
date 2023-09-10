@@ -40,7 +40,7 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 # TODO
 
-- test complex patterns (4+8+16)
+- ~~test complex patterns (4+8+16)~~
 - tap tempo
 - MIDI Clock
 - EG/ADSR
