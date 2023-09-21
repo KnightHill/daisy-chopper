@@ -28,10 +28,19 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 | Encoder Press | Set tempo to 120 BPM | pod |
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Increase tempo | pod |
-| Button 3 | Decrease tempo | pod |
+| Button 3 | Decrease tempo | basic expansion board |
 | Button 4 | Reset pattern step | basic expansion board |
+| Button 5 | Tap tempo | basic expansion board |
+| Button 6 | N/A | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
 | Seed LED | Slicer On/Off | seed |
 | LED 1 | N/A | pod |
 | LED 2 | Current pattern | pod |
+
+# TODO
+
+- ~~test complex patterns (4+8+16)~~
+- tap tempo
+- MIDI Clock
+- EG/ADSR
