@@ -9,9 +9,9 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define TEMPO_MIN 60
+#define TEMPO_MIN 30
 #define TEMPO_DEFAUT 120
-#define TEMPO_MAX 180
+#define TEMPO_MAX 240
 
 static DaisyPod pod;
 static Chopper chopper;
@@ -28,6 +28,8 @@ static float fChopperPw;
 static float oldk1;
 
 // tap tempo vars
+static uint32_t prev_ms;
+static uint16_t tt_count;
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -39,11 +41,13 @@ void Controls(void);
 void InitSynth(void);
 float CalcTempoFreq(uint8_t tempo);
 uint8_t CalcFreqTempo(float freq);
+float bpm_to_freq(uint32_t tempo);
+uint32_t ms_to_bpm(uint32_t ms);
+void HandleSystemRealTime(uint8_t srt_type);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
-  pod.ProcessAnalogControls();
-  pod.ProcessDigitalControls();
+  pod.ProcessAllControls();
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
@@ -96,6 +100,18 @@ void UpdateButtons(void)
 
   if (pod.button4.RisingEdge())
     chopper.Reset();
+
+  if (pod.button5.RisingEdge()) {
+    uint32_t ms = System::GetNow();
+    uint32_t diff = ms - prev_ms;
+    uint32_t bpm = ms_to_bpm(diff);
+    if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
+      tempo = bpm;
+      chopper.SetFreq(CalcTempoFreq(tempo));
+    }
+
+    prev_ms = ms;
+  }
 }
 
 void UpdateLEDs(void)
@@ -159,14 +175,24 @@ void UpdateEncoder(void)
     chopper.PrevPattern();
 }
 
-volatile uint8_t counter = 0;
-
-float callback(float phase, uint8_t quadrant)
+void HandleSystemRealTime(uint8_t srt_type)
 {
-  pod.seed.SetLed(counter % 2);
-  counter++;
+  // MIDI Clock -  24 clicks per quarter note
+  if (srt_type == TimingClock) {
+    tt_count++;
+    if (tt_count == 24) {
+      uint32_t ms = System::GetNow();
+      uint32_t diff = ms - prev_ms;
+      uint32_t bpm = ms_to_bpm(diff);
+      if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
+        tempo = bpm;
+        chopper.SetFreq(CalcTempoFreq(tempo));
+      }
 
-  return 0;
+      prev_ms = ms;
+      tt_count = 0;
+    }
+  }
 }
 
 void InitSynth(void)
@@ -175,6 +201,9 @@ void InitSynth(void)
   active = false;
   oldk1 = 0;
   fChopperPw = 0.3f;
+
+  prev_ms = 0;
+  tt_count = 0;
 
   pod.Init();
   pod.SetAudioBlockSize(4);
@@ -202,6 +231,8 @@ void InitSynth(void)
 */
 float CalcTempoFreq(uint8_t tempo) { return tempo / 60.0f; }
 uint8_t CalcFreqTempo(float freq) { return freq * 60.0f; }
+float bpm_to_freq(uint32_t tempo) { return tempo / 60.0f; }
+uint32_t ms_to_bpm(uint32_t ms) { return 60000 / ms; }
 
 int main(void)
 {
@@ -210,6 +241,15 @@ int main(void)
   pod.StartAdc();
   pod.StartAudio(AudioCallback);
 
+  pod.midi.StartReceive();
+
   while (true) {
+    pod.midi.Listen();
+    while (pod.midi.HasEvents()) {
+      MidiEvent m = pod.midi.PopEvent();
+      if (m.type == SystemRealTime) {
+        HandleSystemRealTime(m.srt_type);
+      }
+    }
   }
 }
