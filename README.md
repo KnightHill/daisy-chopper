@@ -39,6 +39,23 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <td>6</td><td>BLACK</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
 </tr>
 
+<tr>
+<td>7</td><td>BLACK</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td>
+</tr>
+
+<tr>
+<td>8</td><td>BLACK</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td>
+</tr>
+
+<tr>
+<td>8</td><td>BLACK</td>
+
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+</tr>
+
 </tbody>
 </table>
 
@@ -49,11 +66,11 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 | Encoder Turn | Change slicer pattern | pod |
 | Encoder Press | Set tempo to 120 BPM | pod |
 | Button 1 | Slicer On/Off | pod |
-| Button 2 | Tap tempo | basic expansion board |
+| Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
-| Seed LED | Slicer On/Off | seed |
+| Seed LED | Slicer status (On/Off) | seed |
 | LED 1 | N/A | pod |
 | LED 2 | Current pattern | pod |
 
