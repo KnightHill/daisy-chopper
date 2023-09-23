@@ -40,15 +40,15 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 </tr>
 
 <tr>
-<td>7</td><td>BLACK</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td>
+<td>7</td><td>GREEN</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td>
 </tr>
 
 <tr>
-<td>8</td><td>BLACK</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td>
+<td>8</td><td>BLUE</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td>
 </tr>
 
 <tr>
-<td>8</td><td>BLACK</td>
+<td>9</td><td>MAGENTA</td>
 
 <td colspan="2">1</td><td>1</td><td>1</td>
 <td colspan="2">1</td><td>1</td><td>1</td>
@@ -56,6 +56,11 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <td colspan="2">1</td><td>1</td><td>1</td>
 </tr>
 
+<tr>
+<td>10</td><td>CYAN</td>
+<td colspan="4">1</td><td colspan="2">1</td><td colspan="2">1</td>
+<td colspan="4">1</td><td colspan="2">1</td><td colspan="2">1</td>
+</tr>
 </tbody>
 </table>
 
