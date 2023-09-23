@@ -19,6 +19,20 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 | 7 | GOLD | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 |
 | 8 | WHITE | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 |
 
+<table>
+<th>
+<tr>
+<td>Pattern</td>
+<td>LED2</td>
+<td colspan="16">Steps</td>
+</tr>
+</th>
+<tbody>
+<tr>
+</td><td> 1 </td><td> RED </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td> 1 </td><td>
+</tr>
+</tbody>
+</table>
 
 # Controls
 
