@@ -83,7 +83,7 @@ void UpdateButtons(void)
     if (active)
       chopper.Reset();
   }
-
+/*
   if (pod.button2.RisingEdge()) {
     if (++tempo > TEMPO_MAX)
       tempo = TEMPO_MAX;
@@ -97,11 +97,11 @@ void UpdateButtons(void)
 
     chopper.SetFreq(CalcTempoFreq(tempo));
   }
-
-  if (pod.button4.RisingEdge())
+*/
+  if (pod.button3.RisingEdge())
     chopper.Reset();
 
-  if (pod.button5.RisingEdge()) {
+  if (pod.button2.RisingEdge()) {
     uint32_t ms = System::GetNow();
     uint32_t diff = ms - prev_ms;
     uint32_t bpm = ms_to_bpm(diff);

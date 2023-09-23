@@ -2,9 +2,9 @@
 
 A simple wave slicer for E/S Daisy POD.
 
-Default tempo is set to 120 BPM (2Hz). Tempo's range is between 60 and 180 BPM.
+Default tempo is set to 120 BPM (2Hz). Tempo's range is between 30 and 240 BPM.
 
-Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightHill/daisy-basic-expander).
+Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](https://github.com/KnightHill/daisy-basic-expander).
 
 # Patterns
 
@@ -27,11 +27,8 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 | Encoder Turn | Change slicer pattern | pod |
 | Encoder Press | Set tempo to 120 BPM | pod |
 | Button 1 | Slicer On/Off | pod |
-| Button 2 | Increase tempo | pod |
-| Button 3 | Decrease tempo | basic expansion board |
-| Button 4 | Reset pattern step | basic expansion board |
-| Button 5 | Tap tempo | basic expansion board |
-| Button 6 | N/A | basic expansion board |
+| Button 2 | Tap tempo | basic expansion board |
+| Button 3 | Reset pattern step | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
 | Seed LED | Slicer On/Off | seed |
@@ -40,7 +37,7 @@ Using buttons 3 and 4 requires a [basic pod expander](https://github.com/KnightH
 
 # TODO
 
-- ~~test complex patterns (4+8+16)~~
-- tap tempo
-- MIDI Clock
+~~- test complex patterns (4+8+16)~~
+~~- tap tempo~~
+~~- MIDI Clock~~
 - EG/ADSR

@@ -21,7 +21,7 @@ Pattern Chopper::Patterns[PATTERNS_MAX] = {
 
 };
 
-// 3/4 - deosn't work:    {8, {{1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}}}
+// 3/4 - doesn't work:    {8, {{1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}}}
 
 void Chopper::Init(float sample_rate)
 {
