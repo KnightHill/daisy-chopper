@@ -8,17 +8,61 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 # Patterns
 
-| Pattern | LED2 | S1 | S2 | S3 | S4 | S5 | S6 | S7 | S8 | S9 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |--- | --- | --- | --- |--- | --- | --- | --- |
-| 1 | RED | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 2 | GREEN | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 |
-| 3 | BLUE | 1 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| 4 | BLACK | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 5 | MAGENTA | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 |
-| 6 | CYAN | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 0 |
-| 7 | GOLD | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 |
-| 8 | WHITE | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 |
+<table>
+<thead>
+    <tr>
+        <th>Pattern</th>
+        <th>LED2</th>
+        <th colspan="16">Steps</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td><td>RED</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+</tr>
+<tr>
+<td>2</td><td>GREEN</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td>
+</tr>
+<tr>
+<td>3</td><td>BLUE</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td>
+</tr>
 
+<tr>
+<td>4</td><td>MAGENTA</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td>
+</tr>
+
+<tr>
+<td>5</td><td>CYAN</td><td colspan="4">1</td><td colspan="4">1</td><td colspan="4">1</td><td colspan="4">1</td>
+</tr>
+
+<tr>
+<td>6</td><td>BLACK</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+</tr>
+
+<tr>
+<td>7</td><td>GREEN</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td>
+</tr>
+
+<tr>
+<td>8</td><td>BLUE</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td>
+</tr>
+
+<tr>
+<td>9</td><td>MAGENTA</td>
+
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+</tr>
+
+<tr>
+<td>10</td><td>CYAN</td>
+<td colspan="4">1</td><td colspan="2">1</td><td colspan="2">1</td>
+<td colspan="4">1</td><td colspan="2">1</td><td colspan="2">1</td>
+</tr>
+</tbody>
+</table>
 
 # Controls
 
@@ -27,11 +71,11 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 | Encoder Turn | Change slicer pattern | pod |
 | Encoder Press | Set tempo to 120 BPM | pod |
 | Button 1 | Slicer On/Off | pod |
-| Button 2 | Tap tempo | basic expansion board |
+| Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | N/A | pod |
-| Seed LED | Slicer On/Off | seed |
+| Seed LED | Slicer status (On/Off) | seed |
 | LED 1 | N/A | pod |
 | LED 2 | Current pattern | pod |
 
