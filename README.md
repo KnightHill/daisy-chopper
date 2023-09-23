@@ -30,6 +30,8 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <tbody>
 <tr>
 <td>1</td><td>RED</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+</tr>
+<tr>
 <td>2</td><td>GREEN</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td>
 </tr>
 </tbody>
