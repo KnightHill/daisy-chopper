@@ -4,6 +4,7 @@
 #include "chopper.h"
 #include "colors.h"
 #include "util.h"
+#include "tempo_utils.h"
 
 using namespace daisysp;
 using namespace daisy;
@@ -39,10 +40,6 @@ void UpdateButtons(void);
 void UpdateEncoder(void);
 void Controls(void);
 void InitSynth(void);
-float CalcTempoFreq(uint8_t tempo);
-uint8_t CalcFreqTempo(float freq);
-float bpm_to_freq(uint32_t tempo);
-uint32_t ms_to_bpm(uint32_t ms);
 void HandleSystemRealTime(uint8_t srt_type);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
@@ -83,35 +80,36 @@ void UpdateButtons(void)
     if (active)
       chopper.Reset();
   }
-/*
-  if (pod.button2.RisingEdge()) {
-    if (++tempo > TEMPO_MAX)
-      tempo = TEMPO_MAX;
-
-    chopper.SetFreq(CalcTempoFreq(tempo));
-  }
-
-  if (pod.button3.RisingEdge()) {
-    if (--tempo < TEMPO_MIN)
-      tempo = TEMPO_MIN;
-
-    chopper.SetFreq(CalcTempoFreq(tempo));
-  }
-*/
-  if (pod.button3.RisingEdge())
-    chopper.Reset();
 
   if (pod.button2.RisingEdge()) {
     uint32_t ms = System::GetNow();
     uint32_t diff = ms - prev_ms;
-    uint32_t bpm = ms_to_bpm(diff);
+    uint32_t bpm = TempoUtils::ms_to_bpm(diff);
     if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
       tempo = bpm;
-      chopper.SetFreq(CalcTempoFreq(tempo));
+      chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
     }
 
     prev_ms = ms;
   }
+
+  if (pod.button3.RisingEdge())
+    chopper.Reset();
+  /*
+    if (pod.button2.RisingEdge()) {
+      if (++tempo > TEMPO_MAX)
+        tempo = TEMPO_MAX;
+
+      chopper.SetFreq(tempo_to_freq(tempo));
+    }
+
+    if (pod.button3.RisingEdge()) {
+      if (--tempo < TEMPO_MIN)
+        tempo = TEMPO_MIN;
+
+      chopper.SetFreq(tempo_to_freq(tempo));
+    }
+  */
 }
 
 void UpdateLEDs(void)
@@ -165,7 +163,7 @@ void UpdateEncoder(void)
 {
   if (pod.encoder.RisingEdge()) {
     tempo = TEMPO_DEFAUT;
-    chopper.SetFreq(CalcTempoFreq(tempo));
+    chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   }
 
   int32_t inc = pod.encoder.Increment();
@@ -183,10 +181,10 @@ void HandleSystemRealTime(uint8_t srt_type)
     if (tt_count == 24) {
       uint32_t ms = System::GetNow();
       uint32_t diff = ms - prev_ms;
-      uint32_t bpm = ms_to_bpm(diff);
+      uint32_t bpm = TempoUtils::ms_to_bpm(diff);
       if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
         tempo = bpm;
-        chopper.SetFreq(CalcTempoFreq(tempo));
+        chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
       }
 
       prev_ms = ms;
@@ -212,7 +210,7 @@ void InitSynth(void)
 
   float sample_rate = pod.AudioSampleRate();
   chopper.Init(sample_rate);
-  chopper.SetFreq(CalcTempoFreq(tempo));
+  chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   chopper.SetAmp(1.0f);
   chopper.SetPw(fChopperPw);
 
@@ -224,23 +222,12 @@ void InitSynth(void)
   util.BlinkLED(WHITE);
 }
 
-/** Calculates the tempo frequency in Hz for a given BPM
-  http://bradthemad.org/guitar/tempo_explanation.php
-  Freq(Hz) = BPM / 60
-  120 BPM = 2 Hz
-*/
-float CalcTempoFreq(uint8_t tempo) { return tempo / 60.0f; }
-uint8_t CalcFreqTempo(float freq) { return freq * 60.0f; }
-float bpm_to_freq(uint32_t tempo) { return tempo / 60.0f; }
-uint32_t ms_to_bpm(uint32_t ms) { return 60000 / ms; }
-
 int main(void)
 {
   InitSynth();
 
   pod.StartAdc();
   pod.StartAudio(AudioCallback);
-
   pod.midi.StartReceive();
 
   while (true) {
