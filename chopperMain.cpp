@@ -44,7 +44,6 @@ void HandleSystemRealTime(uint8_t srt_type);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
-  pod.ProcessAllControls();
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
@@ -56,6 +55,8 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
 
 void Controls(void)
 {
+  pod.ProcessAllControls();
+
   UpdateButtons();
   UpdateEncoder();
   UpdateKnobs();
@@ -112,40 +113,40 @@ void UpdateButtons(void)
   */
 }
 
+void UpdateLED(RgbLed& led, uint8_t value)
+{
+  switch (value) {
+    case 0:
+      led.Set(RED);
+      break;
+    case 1:
+      led.Set(GREEN);
+      break;
+    case 2:
+      led.Set(BLUE);
+      break;
+    case 3:
+      led.Set(MAGENTA);
+      break;
+    case 4:
+      led.Set(CYAN);
+      break;
+    case 5:
+      led.Set(GOLD);
+      break;
+    case 6:
+      led.Set(WHITE);
+      break;
+  }
+}
+
 void UpdateLEDs(void)
 {
   pod.seed.SetLed(active);
-
-  switch (chopper.GetCurrentPattern()) {
-  case 0:
-    pod.led2.Set(RED);
-    break;
-  case 1:
-  case 8:
-    pod.led2.Set(GREEN);
-    break;
-  case 2:
-  case 9:
-    pod.led2.Set(BLUE);
-    break;
-  case 3:
-  case 10:
-    pod.led2.Set(MAGENTA);
-    break;
-  case 4:
-  case 11:
-    pod.led2.Set(CYAN);
-    break;
-  case 5:
-    pod.led2.Set(BLACK);
-    break;
-  case 6:
-    pod.led2.Set(GOLD);
-    break;
-  case 7:
-    pod.led2.Set(WHITE);
-    break;
-  }
+  uint8_t led1 = chopper.GetCurrentPattern() / 7;
+  uint8_t led2 = chopper.GetCurrentPattern() % 7;
+  UpdateLED(pod.led1, led1);
+  UpdateLED(pod.led2, led2);
   pod.UpdateLeds();
 }
 
