@@ -35,6 +35,7 @@ static uint16_t tt_count;
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
 void UpdateKnobs(void);
+void UpdateLED(RgbLed& led, uint8_t value);
 void UpdateLEDs(void);
 void UpdateButtons(void);
 void UpdateEncoder(void);
@@ -47,7 +48,9 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    const float gate = active ? chopper.Process() : 1.0f;
+    const float cout = chopper.Process();
+    const float gate = active ? cout : 1.0f;
+    pod.seed.SetLed(cout != 0.0f && active);
     out[i] = gate * in[i];
     out[i + 1] = gate * in[i + 1];
   }
@@ -142,7 +145,7 @@ void UpdateLED(RgbLed& led, uint8_t value)
 
 void UpdateLEDs(void)
 {
-  pod.seed.SetLed(active);
+//  pod.seed.SetLed(active);
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
   UpdateLED(pod.led1, led1);
