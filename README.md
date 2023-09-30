@@ -83,7 +83,8 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 # TODO
 
+- EG/ADSR
+- Mix Dry/Wet
 - ~~test complex patterns (4+8+16)~~
 - ~~tap tempo~~
 - ~~MIDI Clock~~
-- EG/ADSR
