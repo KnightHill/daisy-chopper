@@ -54,7 +54,7 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 </tr>
 
 <tr>
-<td>6</td>i
+<td>6</td>
 <td>RED</td>
 <td>GOLD</td>
 <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
