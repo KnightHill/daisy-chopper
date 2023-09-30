@@ -4,6 +4,8 @@ A simple wave slicer for E/S Daisy POD.
 
 Default tempo is set to 120 BPM (2Hz). Tempo's range is between 30 and 240 BPM.
 
+Tempo can be set using tap tempo (button 2) or MIDI clock.
+
 Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](https://github.com/KnightHill/daisy-basic-expander).
 
 # Patterns
@@ -81,7 +83,7 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 # TODO
 
-~~- test complex patterns (4+8+16)~~
-~~- tap tempo~~
-~~- MIDI Clock~~
+- ~~test complex patterns (4+8+16)~~
+- ~~tap tempo~~
+- ~~MIDI Clock~~
 - EG/ADSR

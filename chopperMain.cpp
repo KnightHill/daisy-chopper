@@ -4,6 +4,7 @@
 #include "chopper.h"
 #include "colors.h"
 #include "util.h"
+#include "tempo_utils.h"
 
 using namespace daisysp;
 using namespace daisy;
@@ -34,24 +35,22 @@ static uint16_t tt_count;
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
 void UpdateKnobs(void);
+void UpdateLED(RgbLed& led, uint8_t value);
 void UpdateLEDs(void);
 void UpdateButtons(void);
 void UpdateEncoder(void);
 void Controls(void);
 void InitSynth(void);
-float CalcTempoFreq(uint8_t tempo);
-uint8_t CalcFreqTempo(float freq);
-float bpm_to_freq(uint32_t tempo);
-uint32_t ms_to_bpm(uint32_t ms);
 void HandleSystemRealTime(uint8_t srt_type);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
-  pod.ProcessAllControls();
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    const float gate = active ? chopper.Process() : 1.0f;
+    const float cout = chopper.Process();
+    const float gate = active ? cout : 1.0f;
+    pod.seed.SetLed(cout != 0.0f && active);
     out[i] = gate * in[i];
     out[i + 1] = gate * in[i + 1];
   }
@@ -59,6 +58,8 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
 
 void Controls(void)
 {
+  pod.ProcessAllControls();
+
   UpdateButtons();
   UpdateEncoder();
   UpdateKnobs();
@@ -83,71 +84,72 @@ void UpdateButtons(void)
     if (active)
       chopper.Reset();
   }
-/*
-  if (pod.button2.RisingEdge()) {
-    if (++tempo > TEMPO_MAX)
-      tempo = TEMPO_MAX;
-
-    chopper.SetFreq(CalcTempoFreq(tempo));
-  }
-
-  if (pod.button3.RisingEdge()) {
-    if (--tempo < TEMPO_MIN)
-      tempo = TEMPO_MIN;
-
-    chopper.SetFreq(CalcTempoFreq(tempo));
-  }
-*/
-  if (pod.button3.RisingEdge())
-    chopper.Reset();
 
   if (pod.button2.RisingEdge()) {
     uint32_t ms = System::GetNow();
     uint32_t diff = ms - prev_ms;
-    uint32_t bpm = ms_to_bpm(diff);
+    uint32_t bpm = TempoUtils::ms_to_bpm(diff);
     if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
       tempo = bpm;
-      chopper.SetFreq(CalcTempoFreq(tempo));
+      chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
     }
 
     prev_ms = ms;
+  }
+
+  if (pod.button3.RisingEdge())
+    chopper.Reset();
+  /*
+    if (pod.button2.RisingEdge()) {
+      if (++tempo > TEMPO_MAX)
+        tempo = TEMPO_MAX;
+
+      chopper.SetFreq(tempo_to_freq(tempo));
+    }
+
+    if (pod.button3.RisingEdge()) {
+      if (--tempo < TEMPO_MIN)
+        tempo = TEMPO_MIN;
+
+      chopper.SetFreq(tempo_to_freq(tempo));
+    }
+  */
+}
+
+void UpdateLED(RgbLed& led, uint8_t value)
+{
+  switch (value) {
+    case 0:
+      led.Set(RED);
+      break;
+    case 1:
+      led.Set(GREEN);
+      break;
+    case 2:
+      led.Set(BLUE);
+      break;
+    case 3:
+      led.Set(MAGENTA);
+      break;
+    case 4:
+      led.Set(CYAN);
+      break;
+    case 5:
+      led.Set(GOLD);
+      break;
+    case 6:
+      led.Set(WHITE);
+      break;
   }
 }
 
 void UpdateLEDs(void)
 {
-  pod.seed.SetLed(active);
-
-  switch (chopper.GetCurrentPattern()) {
-  case 0:
-    pod.led2.Set(RED);
-    break;
-  case 1:
-  case 8:
-    pod.led2.Set(GREEN);
-    break;
-  case 2:
-  case 9:
-    pod.led2.Set(BLUE);
-    break;
-  case 3:
-  case 10:
-    pod.led2.Set(MAGENTA);
-    break;
-  case 4:
-  case 11:
-    pod.led2.Set(CYAN);
-    break;
-  case 5:
-    pod.led2.Set(BLACK);
-    break;
-  case 6:
-    pod.led2.Set(GOLD);
-    break;
-  case 7:
-    pod.led2.Set(WHITE);
-    break;
-  }
+//  pod.seed.SetLed(active);
+  uint8_t led1 = chopper.GetCurrentPattern() / 7;
+  uint8_t led2 = chopper.GetCurrentPattern() % 7;
+  UpdateLED(pod.led1, led1);
+  UpdateLED(pod.led2, led2);
   pod.UpdateLeds();
 }
 
@@ -165,7 +167,7 @@ void UpdateEncoder(void)
 {
   if (pod.encoder.RisingEdge()) {
     tempo = TEMPO_DEFAUT;
-    chopper.SetFreq(CalcTempoFreq(tempo));
+    chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   }
 
   int32_t inc = pod.encoder.Increment();
@@ -183,10 +185,10 @@ void HandleSystemRealTime(uint8_t srt_type)
     if (tt_count == 24) {
       uint32_t ms = System::GetNow();
       uint32_t diff = ms - prev_ms;
-      uint32_t bpm = ms_to_bpm(diff);
+      uint32_t bpm = TempoUtils::ms_to_bpm(diff);
       if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
         tempo = bpm;
-        chopper.SetFreq(CalcTempoFreq(tempo));
+        chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
       }
 
       prev_ms = ms;
@@ -212,7 +214,7 @@ void InitSynth(void)
 
   float sample_rate = pod.AudioSampleRate();
   chopper.Init(sample_rate);
-  chopper.SetFreq(CalcTempoFreq(tempo));
+  chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   chopper.SetAmp(1.0f);
   chopper.SetPw(fChopperPw);
 
@@ -224,23 +226,12 @@ void InitSynth(void)
   util.BlinkLED(WHITE);
 }
 
-/** Calculates the tempo frequency in Hz for a given BPM
-  http://bradthemad.org/guitar/tempo_explanation.php
-  Freq(Hz) = BPM / 60
-  120 BPM = 2 Hz
-*/
-float CalcTempoFreq(uint8_t tempo) { return tempo / 60.0f; }
-uint8_t CalcFreqTempo(float freq) { return freq * 60.0f; }
-float bpm_to_freq(uint32_t tempo) { return tempo / 60.0f; }
-uint32_t ms_to_bpm(uint32_t ms) { return 60000 / ms; }
-
 int main(void)
 {
   InitSynth();
 
   pod.StartAdc();
   pod.StartAudio(AudioCallback);
-
   pod.midi.StartReceive();
 
   while (true) {
