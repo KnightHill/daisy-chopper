@@ -18,6 +18,7 @@ static DaisyPod pod;
 static Chopper chopper;
 static Utilities util;
 static Parameter chopperPw;
+static Parameter dryWetMix;
 
 // http://bradthemad.org/guitar/tempo_explanation.php
 // Freq(Hz) = BPM / 60
@@ -26,7 +27,8 @@ static Parameter chopperPw;
 static uint8_t tempo;
 static bool active;
 static float fChopperPw;
-static float oldk1;
+static float fDryWetMix;
+static float oldk1,oldk2;
 
 // tap tempo vars
 static uint32_t prev_ms;
@@ -51,8 +53,9 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
     const float cout = chopper.Process();
     const float gate = active ? cout : 1.0f;
     pod.seed.SetLed(cout != 0.0f && active);
-    out[i] = gate * in[i];
-    out[i + 1] = gate * in[i + 1];
+
+    out[i] = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
+    out[i+1] = (0.5f * gate * fDryWetMix * in[i+1]) + (0.5f * (1.0f - fDryWetMix) * in[i+1]);
   }
 }
 
@@ -156,11 +159,16 @@ void UpdateLEDs(void)
 void UpdateKnobs(void)
 {
   float k1 = pod.knob1.Process();
+  float k2 = dryWetMix.Process();
 
   if (ConditionalParameter(oldk1, k1, fChopperPw, chopperPw.Process()))
     chopper.SetPw(fChopperPw);
 
+  if (ConditionalParameter(oldk2, k2, fDryWetMix, k2))
+    fDryWetMix = k2;
+
   oldk1 = k1;
+  oldk2 = k2;
 }
 
 void UpdateEncoder(void)
@@ -202,7 +210,9 @@ void InitSynth(void)
   tempo = TEMPO_DEFAUT; // 120 BPM
   active = false;
   oldk1 = 0;
+  oldk2 = 0;
   fChopperPw = 0.3f;
+  fDryWetMix = 0.5f;
 
   prev_ms = 0;
   tt_count = 0;
@@ -219,6 +229,7 @@ void InitSynth(void)
   chopper.SetPw(fChopperPw);
 
   chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
+  dryWetMix.Init(pod.knob2, 0.2f, 1.0f, dryWetMix.LINEAR);
 
   // initialize the logger
   pod.seed.StartLog(false);
