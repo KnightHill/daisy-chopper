@@ -14,44 +14,70 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <thead>
     <tr>
         <th>Pattern</th>
+        <th>LED1</th>
         <th>LED2</th>
         <th colspan="16">Steps</th>
     </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td><td>RED</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+<td>1</td>
+<td>RED</td>
+<td>RED</td>
+<td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
 </tr>
 <tr>
-<td>2</td><td>GREEN</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td>
+<td>2</td>
+<td>RED</td>
+<td>GREEN</td>
+<td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td>
 </tr>
 <tr>
-<td>3</td><td>BLUE</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td>
-</tr>
-
-<tr>
-<td>4</td><td>MAGENTA</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td>
-</tr>
-
-<tr>
-<td>5</td><td>CYAN</td><td colspan="4">1</td><td colspan="4">1</td><td colspan="4">1</td><td colspan="4">1</td>
-</tr>
-
-<tr>
-<td>6</td><td>BLACK</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+<td>3</td>
+<td>RED</td>
+<td>BLUE</td>
+<td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td><td colspan="2">1</td>
 </tr>
 
 <tr>
-<td>7</td><td>GREEN</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td>
+<td>4</td>
+<td>RED</td>
+<td>MAGENTA</td>
+<td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td>
 </tr>
 
 <tr>
-<td>8</td><td>BLUE</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td>
+<td>5</td>
+<td>RED</td>
+<td>CYAN</td>
+<td colspan="4">1</td><td colspan="4">1</td><td colspan="4">1</td><td colspan="4">1</td>
 </tr>
 
 <tr>
-<td>9</td><td>MAGENTA</td>
+<td>6</td>i
+<td>RED</td>
+<td>GOLD</td>
+<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+</tr>
 
+<tr>
+<td>7</td>
+<td>GREEN</td>
+<td>RED</td>
+<td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>GREEN</td>
+<td>GREEN</td>
+<td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td>
+</tr>
+
+<tr>
+<td>9</td>
+<td>GREEN</td>
+<td>BLUE</td>
 <td colspan="2">1</td><td>1</td><td>1</td>
 <td colspan="2">1</td><td>1</td><td>1</td>
 <td colspan="2">1</td><td>1</td><td>1</td>
@@ -59,7 +85,9 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 </tr>
 
 <tr>
-<td>10</td><td>CYAN</td>
+<td>10</td>
+<td>GREEN</td>
+<td>MAGENTA</td>
 <td colspan="4">1</td><td colspan="2">1</td><td colspan="2">1</td>
 <td colspan="4">1</td><td colspan="2">1</td><td colspan="2">1</td>
 </tr>
@@ -84,7 +112,8 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 # TODO
 
 - EG/ADSR
-- Mix Dry/Wet
+- Full MIDI control (program change, CC for PW and mix)
+- ~~Dry/Wet mix~~
 - ~~test complex patterns (4+8+16)~~
 - ~~tap tempo~~
 - ~~MIDI Clock~~
