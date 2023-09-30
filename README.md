@@ -13,7 +13,7 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <table>
 <thead>
     <tr>
-        <th>Pattern</th>
+        <th>#</th>
         <th>LED1</th>
         <th>LED2</th>
         <th colspan="16">Steps</th>
