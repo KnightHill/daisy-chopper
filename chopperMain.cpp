@@ -10,6 +10,8 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
+#define BASIC_EXP 1
+
 #define TEMPO_MIN 30
 #define TEMPO_DEFAUT 120
 #define TEMPO_MAX 240
@@ -100,23 +102,10 @@ void UpdateButtons(void)
     prev_ms = ms;
   }
 
+#ifdef BASIC_EXP
   if (pod.button3.RisingEdge())
     chopper.Reset();
-  /*
-    if (pod.button2.RisingEdge()) {
-      if (++tempo > TEMPO_MAX)
-        tempo = TEMPO_MAX;
-
-      chopper.SetFreq(tempo_to_freq(tempo));
-    }
-
-    if (pod.button3.RisingEdge()) {
-      if (--tempo < TEMPO_MIN)
-        tempo = TEMPO_MIN;
-
-      chopper.SetFreq(tempo_to_freq(tempo));
-    }
-  */
+#endif
 }
 
 void UpdateLED(RgbLed& led, uint8_t value)
