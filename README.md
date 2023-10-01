@@ -107,7 +107,7 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <td>GREEN</td>
 <td>GOLD</td>
 <td colspan="2">1</td><td colspan="2">1</td><td colspan="4">1</td>
-<td colspan="2">1</td><td colspan="4">1</td><td colspan="2">1</td>
+<td colspan="2">1</td><td colspan="2">1</td><td colspan="4">1</td>
 </tr>
 </tbody>
 </table>
