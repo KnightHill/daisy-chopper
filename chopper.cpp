@@ -76,8 +76,12 @@ void Chopper::PrevPattern(bool reset)
     Reset();
 }
 
+float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
+
 /**
  * Works only with 4/4 patterns
+ * No support for tied notes over measures
+ * No support for triplets
  */
 float Chopper::Process()
 {
@@ -136,4 +140,3 @@ float Chopper::Process()
   return out * amp_;
 }
 
-float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
