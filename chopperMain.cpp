@@ -32,7 +32,7 @@ static float fChopperPw;
 static float fDryWetMix;
 static float oldk1,oldk2;
 
-// tap tempo vars
+// tap tempo variables
 static uint32_t prev_ms;
 static uint16_t tt_count;
 

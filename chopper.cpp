@@ -1,5 +1,7 @@
+#include "daisysp.h"
 #include "chopper.h"
 
+using namespace daisysp;
 using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
@@ -23,8 +25,7 @@ Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {12, {{1, D16}, {1, D8}, {1, D8}, {1, D16}, {1, D8}, {1, D8}, {1, D16}, {1, D8}, {1, D8}, {1, D16}, {1, D8}, {1, D8}}},
     {12, {{1, D8}, {1, D4}, {1, D4}, {1, D8}, {1, D4}, {1, D4}, {1, D8}, {1, D4}, {1, D4}, {1, D8}, {1, D4}, {1, D4}}},
     {14, {{1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D8}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D8}}},
-    {14, {{1, D8}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D8}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}}}
-};
+    {14, {{1, D8}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D8}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}}}};
 
 // 3/4 - doesn't work:    {8, {{1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}}}
 
@@ -43,6 +44,13 @@ void Chopper::Init(float sample_rate)
   current_pattern_ = 0;
   pattern_step_ = 0;
   old_quadrant_index_ = -1;
+
+  // Init ADSR
+  env_.Init(sample_rate);
+  env_.SetTime(ADSR_SEG_ATTACK, .1);
+  env_.SetTime(ADSR_SEG_DECAY, .1);
+  env_.SetTime(ADSR_SEG_RELEASE, .01);
+  env_.SetSustainLevel(.5);
 }
 
 void Chopper::Reset(float _phase)
@@ -76,8 +84,12 @@ void Chopper::PrevPattern(bool reset)
     Reset();
 }
 
+float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
+
 /**
  * Works only with 4/4 patterns
+ * No support for tied notes over measures
+ * No support for triplets
  */
 float Chopper::Process()
 {
@@ -135,5 +147,3 @@ float Chopper::Process()
 
   return out * amp_;
 }
-
-float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
