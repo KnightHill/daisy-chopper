@@ -30,7 +30,6 @@ struct Pattern {
 class Chopper
 {
 private:
-  // static Note Patterns[PATTERNS_MAX][PATTERN_STEPS_MAX];
   static Pattern Patterns[PATTERNS_MAX];
 
   void IncPatternStep(uint8_t length);
@@ -110,6 +109,7 @@ private:
   int16_t current_pattern_, pattern_step_;
   int16_t old_quadrant_index_;
   Note note_;
+  daisysp::Adsr env_;
 };
 
 } // namespace bytebeat
