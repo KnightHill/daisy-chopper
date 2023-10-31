@@ -95,9 +95,16 @@ public:
   /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
    */
   void Reset(float _phase = 0.0f);
+
+  // Pattern methods
   void NextPattern(bool reset = true);
   void PrevPattern(bool reset = true);
   inline int16_t GetCurrentPattern() { return current_pattern_; }
+
+  // Envelope methods
+  void SetAttack(float attack) { env_.SetTime(daisysp::ADSR_SEG_ATTACK, attack); }
+  void SetDecay(float decay) { env_.SetTime(daisysp::ADSR_SEG_DECAY, decay); }
+  void SetRelease(float release) { env_.SetTime(daisysp::ADSR_SEG_RELEASE, release); }
 
 private:
   float CalcPhaseInc(float f);
