@@ -153,6 +153,7 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 # TODO
 
+- Fix clicking when using with guitar
 - Full MIDI control (program change, CC for PW and mix)
 - ~~EG/ADSR~~
 - ~~Dry/Wet mix~~
