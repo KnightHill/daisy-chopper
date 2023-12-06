@@ -30,7 +30,7 @@ static uint8_t tempo;
 static bool active;
 static float fChopperPw;
 static float fDryWetMix;
-static float oldk1,oldk2;
+static float oldk1, oldk2;
 
 // tap tempo variables
 static uint32_t prev_ms;
@@ -39,7 +39,7 @@ static uint16_t tt_count;
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
 void UpdateKnobs(void);
-void UpdateLED(RgbLed& led, uint8_t value);
+void UpdateLED(RgbLed &led, uint8_t value);
 void UpdateLEDs(void);
 void UpdateButtons(void);
 void UpdateEncoder(void);
@@ -49,6 +49,8 @@ void HandleSystemRealTime(uint8_t srt_type);
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
+  float lout, rout;
+
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
@@ -56,8 +58,14 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
     const float gate = active ? cout : 1.0f;
     pod.seed.SetLed(cout != 0.0f && active);
 
-    out[i] = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
-    out[i+1] = (0.5f * gate * fDryWetMix * in[i+1]) + (0.5f * (1.0f - fDryWetMix) * in[i+1]);
+    float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
+    float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
+
+    fonepole(lout, left, .01f);
+    fonepole(rout, right, .01f);
+
+    out[i] = lout;
+    out[i + 1] = rout;
   }
 }
 
@@ -108,36 +116,36 @@ void UpdateButtons(void)
 #endif
 }
 
-void UpdateLED(RgbLed& led, uint8_t value)
+void UpdateLED(RgbLed &led, uint8_t value)
 {
   switch (value) {
-    case 0:
-      led.Set(RED);
-      break;
-    case 1:
-      led.Set(GREEN);
-      break;
-    case 2:
-      led.Set(BLUE);
-      break;
-    case 3:
-      led.Set(MAGENTA);
-      break;
-    case 4:
-      led.Set(CYAN);
-      break;
-    case 5:
-      led.Set(GOLD);
-      break;
-    case 6:
-      led.Set(WHITE);
-      break;
+  case 0:
+    led.Set(RED);
+    break;
+  case 1:
+    led.Set(GREEN);
+    break;
+  case 2:
+    led.Set(BLUE);
+    break;
+  case 3:
+    led.Set(MAGENTA);
+    break;
+  case 4:
+    led.Set(CYAN);
+    break;
+  case 5:
+    led.Set(GOLD);
+    break;
+  case 6:
+    led.Set(WHITE);
+    break;
   }
 }
 
 void UpdateLEDs(void)
 {
-//  pod.seed.SetLed(active);
+  //  pod.seed.SetLed(active);
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
   UpdateLED(pod.led1, led1);
