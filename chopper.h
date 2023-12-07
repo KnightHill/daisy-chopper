@@ -32,8 +32,6 @@ class Chopper
 private:
   static Pattern Patterns[PATTERNS_MAX];
 
-  void IncPatternStep(uint8_t length);
-
 public:
   Chopper() {}
   ~Chopper() {}
@@ -111,7 +109,12 @@ public:
   void SetRelease(float release) { env_.SetTime(daisysp::ADSR_SEG_RELEASE, release); }
 
 private:
+  /** Increment pattern step */
+  void IncPatternStep(uint8_t length);
+
+  /** Calculate phase increment */
   float CalcPhaseInc(float f);
+
   float amp_, freq_, pw_, pw_rad_;
   float sr_, sr_recip_;
   float phase_, phase_inc_;

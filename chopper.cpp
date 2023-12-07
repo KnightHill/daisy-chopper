@@ -6,6 +6,7 @@ using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 
+// TODO: try tied 16th notes for all patterns
 Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {16, {{1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}}},
 
