@@ -2,7 +2,7 @@
 TARGET = Chopper
 
 # Sources
-CPP_SOURCES = chopperMain.cpp chopper.cpp util.cpp base_hardware_module.cpp
+CPP_SOURCES = chopperMain.cpp chopper.cpp util.cpp
 
 # Library Locations
 LIBDAISY_DIR = ../../libDaisy
