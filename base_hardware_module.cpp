@@ -3,7 +3,7 @@
 using namespace daisy;
 using namespace bytebeat;
 
-BaseHardwareModule::BaseHardwareModule() { m_switchMetaData = NULL; }
+BaseHardwareModule::BaseHardwareModule() {}
 
 BaseHardwareModule::~BaseHardwareModule() {}
 
@@ -18,21 +18,6 @@ void BaseHardwareModule::Init(bool boost)
 
 void BaseHardwareModule::DelayMs(size_t del) { seed.DelayMs(del); }
 
-void BaseHardwareModule::SetHidUpdateRates()
-{
-  if (!knobs.empty()) {
-    for (int i = 0; i < GetKnobCount(); i++) {
-      knobs[i].SetSampleRate(AudioCallbackRate());
-    }
-  }
-
-  if (!leds.empty()) {
-    for (int i = 0; i < GetLedCount(); i++) {
-      leds[i].SetSampleRate(AudioCallbackRate());
-    }
-  }
-}
-
 void BaseHardwareModule::StartAudio(AudioHandle::InterleavingAudioCallback cb) { seed.StartAudio(cb); }
 
 void BaseHardwareModule::StartAudio(AudioHandle::AudioCallback cb) { seed.StartAudio(cb); }
@@ -43,19 +28,11 @@ void BaseHardwareModule::ChangeAudioCallback(AudioHandle::AudioCallback cb) { se
 
 void BaseHardwareModule::StopAudio() { seed.StopAudio(); }
 
-void BaseHardwareModule::SetAudioBlockSize(size_t size)
-{
-  seed.SetAudioBlockSize(size);
-  SetHidUpdateRates();
-}
+void BaseHardwareModule::SetAudioBlockSize(size_t size) { seed.SetAudioBlockSize(size); }
 
 size_t BaseHardwareModule::AudioBlockSize() { return seed.AudioBlockSize(); }
 
-void BaseHardwareModule::SetAudioSampleRate(SaiHandle::Config::SampleRate samplerate)
-{
-  seed.SetAudioSampleRate(samplerate);
-  SetHidUpdateRates();
-}
+void BaseHardwareModule::SetAudioSampleRate(SaiHandle::Config::SampleRate samplerate) { seed.SetAudioSampleRate(samplerate); }
 
 float BaseHardwareModule::AudioSampleRate() { return seed.AudioSampleRate(); }
 
@@ -109,27 +86,6 @@ int BaseHardwareModule::GetSwitchCount() { return switches.size(); }
 int BaseHardwareModule::GetEncoderCount() { return encoders.size(); }
 
 int BaseHardwareModule::GetLedCount() { return leds.size(); }
-
-int BaseHardwareModule::GetPreferredSwitchIDForSpecialFunctionType(SpecialFunctionType sfType)
-{
-  // If there are no switches return -1 since there can't be a preferred switch ID
-  if (GetSwitchCount() == 0 || m_switchMetaDataParamCount == 0 || m_switchMetaData == NULL) {
-    return -1;
-  }
-
-  // Look to see if there is a preferred mapping for this special function type
-  for (int i = 0; i < m_switchMetaDataParamCount; i++) {
-    if (m_switchMetaData[i].sfType == sfType) {
-      // Make sure this device has that physical switch
-      if (m_switchMetaData[i].switchMapping < GetSwitchCount()) {
-        return m_switchMetaData[i].switchMapping;
-      }
-    }
-  }
-
-  // No preffered switch mapping so return -1;
-  return -1;
-}
 
 void BaseHardwareModule::SetLed(int ledID, float bright)
 {

@@ -133,13 +133,6 @@ public:
   int GetLedCount();
 
   /**
-     Gets the ID of the Switch this hardware would prefer is used for a specific special function such as Bypass or TapTempo.
-     \param sfType The type of special function
-     \return The preferred SwitchID for this function. -1 if there is no available switch for this function on this hardware
-   */
-  int GetPreferredSwitchIDForSpecialFunctionType(SpecialFunctionType sfType);
-
-  /**
      Set Led
      \param ledID Led Index
      \param bright Brightness
@@ -149,12 +142,6 @@ public:
   /** Updates all the LEDs based on their values */
   void UpdateLeds();
 
-  /** Toggle the Hardware Audio Bypass (if applicable) */
-  void SetAudioBypass(bool enabled);
-
-  /** Toggle the Hardware Audio Mute (if applicable) */
-  void SetAudioMute(bool enabled);
-
   DaisySeed seed;
 
   std::vector<AnalogControl> knobs;
@@ -163,11 +150,6 @@ public:
   std::vector<Led> leds;
 
 protected:
-  int m_switchMetaDataParamCount; // Number of Switch Meta Data Parameters
-  const PreferredSwitchMetaData *m_switchMetaData;
-
-  void SetHidUpdateRates();
-
   void InitKnobs(int count, Pin pins[]);
   void InitSwitches(int count, Pin pins[]);
   void InitEncoders(int count, Pin pins[][3]);
