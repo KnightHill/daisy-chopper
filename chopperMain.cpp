@@ -12,6 +12,16 @@ using namespace bytebeat;
 
 #define BASIC_EXP 1
 
+// Basic Expansion Control Definitions
+std::vector<AnalogControl> knobs;
+std::vector<Switch> switches;
+
+const uint16_t knobCount = 2;
+const uint16_t switchCount = 4;
+
+Pin knobPins[knobCount] = {seed::D22, seed::D16};
+Pin switchPins[switchCount] = {seed::D7, seed::D8, seed::D9, seed::D10};
+
 #define TEMPO_MIN 30
 #define TEMPO_DEFAUT 120
 #define TEMPO_MAX 240
@@ -46,6 +56,7 @@ void UpdateEncoder(void);
 void Controls(void);
 void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
+void InitExpansionControls();
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
@@ -111,7 +122,8 @@ void UpdateButtons(void)
   }
 
 #ifdef BASIC_EXP
-  if (pod.button3.RisingEdge())
+  // if (pod.button3.RisingEdge())
+  if (switches[0].RisingEdge())
     chopper.Reset();
 #endif
 }
@@ -202,6 +214,35 @@ void HandleSystemRealTime(uint8_t srt_type)
   }
 }
 
+void InitExpansionControls()
+{
+
+  // Init knobs
+  // Set order of ADCs based on CHANNEL NUMBER
+  AdcChannelConfig cfg[knobCount];
+
+  // Init with Single Pins
+  for (int i = 0; i < knobCount; i++) {
+    cfg[i].InitSingle(knobPins[i]);
+  }
+
+  pod.seed.adc.Init(cfg, knobCount);
+
+  // Setup the Knobs
+  for (int i = 0; i < knobCount; i++) {
+    AnalogControl myKnob;
+    myKnob.Init(pod.seed.adc.GetPtr(i), pod.seed.AudioCallbackRate());
+    knobs.push_back(myKnob);
+  }
+
+  // Init switches
+  for (int i = 0; i < switchCount; i++) {
+    Switch mySwitch;
+    mySwitch.Init(switchPins[i]);
+    switches.push_back(mySwitch);
+  }
+}
+
 void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
@@ -218,6 +259,10 @@ void InitSynth(void)
   pod.SetAudioBlockSize(4);
 
   util.Init(&pod);
+
+#ifdef BASIC_EXP
+  InitExpansionControls();
+#endif
 
   float sample_rate = pod.AudioSampleRate();
   chopper.Init(sample_rate);
