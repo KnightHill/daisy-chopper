@@ -12,7 +12,8 @@ Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {16, {{1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}}},
     {8, {{1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}}},
 
-    //    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}}},
+    //    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0,
+    //    D16}}},
     {4, {{1, D4}, {1, D4}, {1, D4}, {1, D4}}},
 
     {16, {{0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}}},
@@ -47,17 +48,27 @@ void Chopper::Init(float sample_rate)
 
   // Init ADSR
   env_.Init(sample_rate);
-  env_.SetTime(ADSR_SEG_ATTACK, .2);
-  env_.SetTime(ADSR_SEG_DECAY, .2);
+  env_.SetTime(ADSR_SEG_ATTACK, .1);
+  env_.SetTime(ADSR_SEG_DECAY, .1);
   env_.SetTime(ADSR_SEG_RELEASE, .01);
-  env_.SetSustainLevel(.5);
+  env_.SetSustainLevel(.9);
 }
 
-void Chopper::Reset(float _phase)
+void Chopper::Reset(float phase)
 {
-  phase_ = _phase;
+  phase_ = phase;
   pattern_step_ = 0;
   old_quadrant_index_ = -1;
+}
+
+uint16_t Chopper::GetQuadrant(float divider)
+{
+  float phase = phase_;
+  if (phase > TWOPI_F)
+    phase = TWOPI_F;
+
+  uint16_t quadrant = static_cast<uint16_t>(phase * divider / TWOPI_F);
+  return quadrant;
 }
 
 void Chopper::IncPatternStep(uint8_t length)
@@ -98,7 +109,17 @@ float Chopper::Process()
   int16_t quadrant_index = (int16_t)quadrant;
 
   if (quadrant_index != old_quadrant_index_) {
+
+    // TODO: Add env_
+    Note oldNote = note_;
+
     note_ = Patterns[current_pattern_].notes[pattern_step_];
+
+    if (note_.active == true && oldNote.active == false) {
+      // trigger envelope
+      env_.Process(true);
+    }
+
     switch (note_.duration) {
     case D16:
       IncPatternStep(Patterns[current_pattern_].length);
