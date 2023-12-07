@@ -12,7 +12,7 @@ Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {16, {{1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}}},
     {8, {{1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}}},
 
-    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}}},
+    //    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}}},
     {4, {{1, D4}, {1, D4}, {1, D4}, {1, D4}}},
 
     {16, {{0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}}},
@@ -47,8 +47,8 @@ void Chopper::Init(float sample_rate)
 
   // Init ADSR
   env_.Init(sample_rate);
-  env_.SetTime(ADSR_SEG_ATTACK, .1);
-  env_.SetTime(ADSR_SEG_DECAY, .1);
+  env_.SetTime(ADSR_SEG_ATTACK, .2);
+  env_.SetTime(ADSR_SEG_DECAY, .2);
   env_.SetTime(ADSR_SEG_RELEASE, .01);
   env_.SetSustainLevel(.5);
 }

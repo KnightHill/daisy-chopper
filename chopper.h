@@ -9,7 +9,7 @@ namespace bytebeat
 {
 
 #define PATTERN_STEPS_MAX 16
-#define PATTERNS_MAX 14
+#define PATTERNS_MAX 13
 
 enum NoteDuration {
   D4, // quarter

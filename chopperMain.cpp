@@ -10,7 +10,7 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define BASIC_EXP 1
+// #define BASIC_EXP 1
 
 // Basic Expansion Control Definitions
 std::vector<AnalogControl> knobs;
@@ -60,8 +60,6 @@ void InitExpansionControls();
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
-  float lout, rout;
-
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
@@ -72,11 +70,8 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
     float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
     float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
 
-    fonepole(lout, left, .01f);
-    fonepole(rout, right, .01f);
-
-    out[i] = lout;
-    out[i + 1] = rout;
+    out[i] = left;
+    out[i + 1] = right;
   }
 }
 
