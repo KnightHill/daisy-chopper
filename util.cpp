@@ -1,10 +1,11 @@
 #include "daisy_pod.h"
+#include "basic_exp.h"
 #include "util.h"
 
 using namespace daisy;
 using namespace bytebeat;
 
-void Utilities::Init(DaisyPod *pod) { pod_ = pod; }
+void Utilities::Init(BasicExp *pod) { pod_ = pod; }
 
 void Utilities::BlinkLEDColor(float r, float g, float b, unsigned long delay)
 {
