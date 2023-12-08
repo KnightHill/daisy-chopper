@@ -9,7 +9,7 @@ namespace bytebeat
 {
 
 #define PATTERN_STEPS_MAX 16
-#define PATTERNS_MAX 14
+#define PATTERNS_MAX 13
 
 enum NoteDuration {
   D4, // quarter
@@ -31,8 +31,6 @@ class Chopper
 {
 private:
   static Pattern Patterns[PATTERNS_MAX];
-
-  void IncPatternStep(uint8_t length);
 
 public:
   Chopper() {}
@@ -90,11 +88,13 @@ public:
 
   /** Adds a value 0.0-1.0 (mapped to 0.0-TWO_PI) to the current phase. Useful for PM and "FM" synthesis.
    */
-  void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
+  void PhaseAdd(float phase) { phase_ += (phase * TWOPI_F); }
 
   /** Resets the phase to the input argument. If no argumeNt is present, it will reset phase to 0.0;
    */
-  void Reset(float _phase = 0.0f);
+  void Reset(float phase = 0.0f);
+
+  uint16_t GetQuadrant(float numQuadrants = 4.0f);
 
   // Pattern methods
   void NextPattern(bool reset = true);
@@ -107,7 +107,14 @@ public:
   void SetRelease(float release) { env_.SetTime(daisysp::ADSR_SEG_RELEASE, release); }
 
 private:
+  /** Increment pattern step */
+  void IncPatternStep(uint8_t length);
+
+  float ProcessGate();
+
+  /** Calculate phase increment */
   float CalcPhaseInc(float f);
+
   float amp_, freq_, pw_, pw_rad_;
   float sr_, sr_recip_;
   float phase_, phase_inc_;
@@ -117,6 +124,7 @@ private:
   int16_t old_quadrant_index_;
   Note note_;
   daisysp::Adsr env_;
+  bool active_env_;
 };
 
 } // namespace bytebeat

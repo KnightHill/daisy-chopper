@@ -10,7 +10,24 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define BASIC_EXP 1
+// #define BASIC_EXP 1
+
+// Basic Expansion Control Definitions
+// TODO: Add ProcessAnalog/Digital Controls
+std::vector<AnalogControl> knobs;
+std::vector<Switch> switches;
+
+const uint16_t knobCount = 4;
+const uint16_t switchCount = 4;
+
+// Include both pod's and expansion board knobs
+Pin knobPins[knobCount] = {seed::D21, seed::D15, seed::D22, seed::D16};
+Pin switchPins[switchCount] = {seed::D7, seed::D8, seed::D9, seed::D10};
+
+/*
+// Include both pod's and expansion board switches
+Pin switchPins[switchCount] = {seed::D27, seed::D28, seed::D7, seed::D8, seed::D9, seed::D10};
+*/
 
 #define TEMPO_MIN 30
 #define TEMPO_DEFAUT 120
@@ -30,7 +47,7 @@ static uint8_t tempo;
 static bool active;
 static float fChopperPw;
 static float fDryWetMix;
-static float oldk1,oldk2;
+static float oldk1, oldk2;
 
 // tap tempo variables
 static uint32_t prev_ms;
@@ -39,13 +56,14 @@ static uint16_t tt_count;
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
 void UpdateKnobs(void);
-void UpdateLED(RgbLed& led, uint8_t value);
+void UpdateLED(RgbLed &led, uint8_t value);
 void UpdateLEDs(void);
 void UpdateButtons(void);
 void UpdateEncoder(void);
 void Controls(void);
 void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
+void InitExpansionControls();
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
@@ -56,8 +74,11 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
     const float gate = active ? cout : 1.0f;
     pod.seed.SetLed(cout != 0.0f && active);
 
-    out[i] = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
-    out[i+1] = (0.5f * gate * fDryWetMix * in[i+1]) + (0.5f * (1.0f - fDryWetMix) * in[i+1]);
+    float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
+    float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
+
+    out[i] = left;
+    out[i + 1] = right;
   }
 }
 
@@ -103,41 +124,42 @@ void UpdateButtons(void)
   }
 
 #ifdef BASIC_EXP
-  if (pod.button3.RisingEdge())
+  // if (pod.button3.RisingEdge())
+  if (switches[0].RisingEdge())
     chopper.Reset();
 #endif
 }
 
-void UpdateLED(RgbLed& led, uint8_t value)
+void UpdateLED(RgbLed &led, uint8_t value)
 {
   switch (value) {
-    case 0:
-      led.Set(RED);
-      break;
-    case 1:
-      led.Set(GREEN);
-      break;
-    case 2:
-      led.Set(BLUE);
-      break;
-    case 3:
-      led.Set(MAGENTA);
-      break;
-    case 4:
-      led.Set(CYAN);
-      break;
-    case 5:
-      led.Set(GOLD);
-      break;
-    case 6:
-      led.Set(WHITE);
-      break;
+  case 0:
+    led.Set(RED);
+    break;
+  case 1:
+    led.Set(GREEN);
+    break;
+  case 2:
+    led.Set(BLUE);
+    break;
+  case 3:
+    led.Set(MAGENTA);
+    break;
+  case 4:
+    led.Set(CYAN);
+    break;
+  case 5:
+    led.Set(GOLD);
+    break;
+  case 6:
+    led.Set(WHITE);
+    break;
   }
 }
 
 void UpdateLEDs(void)
 {
-//  pod.seed.SetLed(active);
+  //  pod.seed.SetLed(active);
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
   UpdateLED(pod.led1, led1);
@@ -194,6 +216,34 @@ void HandleSystemRealTime(uint8_t srt_type)
   }
 }
 
+void InitExpansionControls()
+{
+  // Init knobs
+  // Set order of ADCs based on CHANNEL NUMBER
+  AdcChannelConfig cfg[knobCount];
+
+  // Init with Single Pins
+  for (int i = 0; i < knobCount; i++) {
+    cfg[i].InitSingle(knobPins[i]);
+  }
+
+  pod.seed.adc.Init(cfg, knobCount);
+
+  // Setup the Knobs
+  for (int i = 0; i < knobCount; i++) {
+    AnalogControl myKnob;
+    myKnob.Init(pod.seed.adc.GetPtr(i), pod.seed.AudioCallbackRate());
+    knobs.push_back(myKnob);
+  }
+
+  // Init switches
+  for (int i = 0; i < switchCount; i++) {
+    Switch mySwitch;
+    mySwitch.Init(switchPins[i]);
+    switches.push_back(mySwitch);
+  }
+}
+
 void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
@@ -210,6 +260,10 @@ void InitSynth(void)
   pod.SetAudioBlockSize(4);
 
   util.Init(&pod);
+
+#ifdef BASIC_EXP
+  InitExpansionControls();
+#endif
 
   float sample_rate = pod.AudioSampleRate();
   chopper.Init(sample_rate);

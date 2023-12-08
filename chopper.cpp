@@ -15,7 +15,6 @@ Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}}},
     {4, {{1, D4}, {1, D4}, {1, D4}, {1, D4}}},
 
-    {16, {{0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}}},
     {16, {{1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}}},
     {16, {{1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}}},
 
@@ -50,7 +49,7 @@ void Chopper::Init(float sample_rate)
   env_.SetTime(ADSR_SEG_ATTACK, .1);
   env_.SetTime(ADSR_SEG_DECAY, .1);
   env_.SetTime(ADSR_SEG_RELEASE, .01);
-  env_.SetSustainLevel(.5);
+  env_.SetSustainLevel(.9);
 }
 
 void Chopper::Reset(float _phase)
@@ -86,12 +85,28 @@ void Chopper::PrevPattern(bool reset)
 
 float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
 
+uint16_t Chopper::GetQuadrant(float numQuadrants)
+{
+  float phase = phase_;
+  if (phase > TWOPI_F)
+    phase = TWOPI_F;
+
+  return static_cast<uint16_t>(phase * numQuadrants / TWOPI_F);
+}
+
+float Chopper::Process()
+{
+  float gate = ProcessGate();
+  float out = env_.Process(gate > 0);
+  return out * amp_;
+}
+
 /**
  * Works only with 4/4 patterns
  * No support for tied notes over measures
  * No support for triplets
  */
-float Chopper::Process()
+float Chopper::ProcessGate()
 {
   float out;
   float quadrant = floorf(phase_ / HALFPI_F);
@@ -145,5 +160,5 @@ float Chopper::Process()
   }
   eor_ = (phase_ - phase_inc_ < PI_F && phase_ >= PI_F);
 
-  return out * amp_;
+  return out;
 }
