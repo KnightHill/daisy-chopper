@@ -10,7 +10,7 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define BASIC_EXP 1
+// #define BASIC_EXP 1
 
 // Basic Expansion Control Definitions
 // TODO: Add ProcessAnalog/Digital Controls
