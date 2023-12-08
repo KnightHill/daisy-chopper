@@ -6,18 +6,15 @@ using namespace bytebeat;
 
 constexpr float TWO_PI_RECIP = 1.0f / TWOPI_F;
 
-// TODO: try tied 16th notes for all patterns
 Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {16, {{1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}}},
 
     {16, {{1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}}},
     {8, {{1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D8}}},
 
-    //    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0,
-    //    D16}}},
+    {16, {{1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}, {1, D16}, {0, D16}, {0, D16}, {0, D16}}},
     {4, {{1, D4}, {1, D4}, {1, D4}, {1, D4}}},
 
-    {16, {{0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}, {0, D16}}},
     {16, {{1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {0, D16}}},
     {16, {{1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}}},
 
@@ -46,7 +43,6 @@ void Chopper::Init(float sample_rate)
   current_pattern_ = 0;
   pattern_step_ = 0;
   old_quadrant_index_ = -1;
-  active_env_ = false;
 
   // Init ADSR
   env_.Init(sample_rate);
@@ -56,21 +52,11 @@ void Chopper::Init(float sample_rate)
   env_.SetSustainLevel(.9);
 }
 
-void Chopper::Reset(float phase)
+void Chopper::Reset(float _phase)
 {
-  phase_ = phase;
+  phase_ = _phase;
   pattern_step_ = 0;
   old_quadrant_index_ = -1;
-}
-
-uint16_t Chopper::GetQuadrant(float divider)
-{
-  float phase = phase_;
-  if (phase > TWOPI_F)
-    phase = TWOPI_F;
-
-  uint16_t quadrant = static_cast<uint16_t>(phase * divider / TWOPI_F);
-  return quadrant;
 }
 
 void Chopper::IncPatternStep(uint8_t length)
@@ -99,33 +85,26 @@ void Chopper::PrevPattern(bool reset)
 
 float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
 
+float Chopper::Process()
+{
+  float gate = ProcessGate();
+  float out = env_.Process(gate > 0);
+  return out * amp_;
+}
+
 /**
  * Works only with 4/4 patterns
  * No support for tied notes over measures
  * No support for triplets
  */
-float Chopper::Process()
+float Chopper::ProcessGate()
 {
-  float out, envOut;
+  float out;
   float quadrant = floorf(phase_ / HALFPI_F);
   int16_t quadrant_index = (int16_t)quadrant;
 
   if (quadrant_index != old_quadrant_index_) {
-
-    Note oldNote = note_;
     note_ = Patterns[current_pattern_].notes[pattern_step_];
-
-    // Detect note ons and note offs
-    if (oldNote.active == false && note_.active == true) {
-      // NOTE ON
-      active_env_ = true;
-    } else if (oldNote.active == true && note_.active == false) {
-      // NOTE OFF
-      active_env_ = false;
-    }
-
-    envOut = env_.Process(active_env_);
-
     switch (note_.duration) {
     case D16:
       IncPatternStep(Patterns[current_pattern_].length);
@@ -141,8 +120,6 @@ float Chopper::Process()
     }
 
     old_quadrant_index_ = quadrant_index;
-  } else {
-    envOut = env_.Process(active_env_);
   }
 
   if (note_.duration == D16) {
@@ -163,6 +140,7 @@ float Chopper::Process()
     else
       out = 0;
   }
+
   phase_ += phase_inc_;
 
   if (phase_ > TWOPI_F) {
@@ -173,5 +151,5 @@ float Chopper::Process()
   }
   eor_ = (phase_ - phase_inc_ < PI_F && phase_ >= PI_F);
 
-  return out * amp_;
+  return out;
 }

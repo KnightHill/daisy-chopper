@@ -94,10 +94,6 @@ public:
    */
   void Reset(float phase = 0.0f);
 
-  /** Returns the phase quadrant (0-4)
-   */
-  uint16_t GetQuadrant(float divider = 4.0f);
-
   // Pattern methods
   void NextPattern(bool reset = true);
   void PrevPattern(bool reset = true);
@@ -111,6 +107,8 @@ public:
 private:
   /** Increment pattern step */
   void IncPatternStep(uint8_t length);
+
+  float ProcessGate();
 
   /** Calculate phase increment */
   float CalcPhaseInc(float f);
