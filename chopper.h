@@ -124,6 +124,7 @@ private:
   int16_t old_quadrant_index_;
   Note note_;
   daisysp::Adsr env_;
+  bool active_env_;
 };
 
 } // namespace bytebeat

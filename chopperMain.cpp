@@ -10,17 +10,24 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-// #define BASIC_EXP 1
+#define BASIC_EXP 1
 
 // Basic Expansion Control Definitions
+// TODO: Add ProcessAnalog/Digital Controls
 std::vector<AnalogControl> knobs;
 std::vector<Switch> switches;
 
-const uint16_t knobCount = 2;
+const uint16_t knobCount = 4;
 const uint16_t switchCount = 4;
 
-Pin knobPins[knobCount] = {seed::D22, seed::D16};
+// Include both pod's and expansion board knobs
+Pin knobPins[knobCount] = {seed::D21, seed::D15, seed::D22, seed::D16};
 Pin switchPins[switchCount] = {seed::D7, seed::D8, seed::D9, seed::D10};
+
+/*
+// Include both pod's and expansion board switches
+Pin switchPins[switchCount] = {seed::D27, seed::D28, seed::D7, seed::D8, seed::D9, seed::D10};
+*/
 
 #define TEMPO_MIN 30
 #define TEMPO_DEFAUT 120
@@ -211,7 +218,6 @@ void HandleSystemRealTime(uint8_t srt_type)
 
 void InitExpansionControls()
 {
-
   // Init knobs
   // Set order of ADCs based on CHANNEL NUMBER
   AdcChannelConfig cfg[knobCount];

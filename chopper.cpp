@@ -46,6 +46,7 @@ void Chopper::Init(float sample_rate)
   current_pattern_ = 0;
   pattern_step_ = 0;
   old_quadrant_index_ = -1;
+  active_env_ = false;
 
   // Init ADSR
   env_.Init(sample_rate);
@@ -105,21 +106,25 @@ float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
  */
 float Chopper::Process()
 {
-  float out;
+  float out, envOut;
   float quadrant = floorf(phase_ / HALFPI_F);
   int16_t quadrant_index = (int16_t)quadrant;
 
   if (quadrant_index != old_quadrant_index_) {
 
-    // TODO: Add env_
     Note oldNote = note_;
-
     note_ = Patterns[current_pattern_].notes[pattern_step_];
 
-    if (note_.active == true && oldNote.active == false) {
-      // trigger envelope
-      env_.Process(true);
+    // Detect note ons and note offs
+    if (oldNote.active == false && note_.active == true) {
+      // NOTE ON
+      active_env_ = true;
+    } else if (oldNote.active == true && note_.active == false) {
+      // NOTE OFF
+      active_env_ = false;
     }
+
+    envOut = env_.Process(active_env_);
 
     switch (note_.duration) {
     case D16:
@@ -136,6 +141,8 @@ float Chopper::Process()
     }
 
     old_quadrant_index_ = quadrant_index;
+  } else {
+    envOut = env_.Process(active_env_);
   }
 
   if (note_.duration == D16) {
@@ -156,7 +163,6 @@ float Chopper::Process()
     else
       out = 0;
   }
-
   phase_ += phase_inc_;
 
   if (phase_ > TWOPI_F) {
