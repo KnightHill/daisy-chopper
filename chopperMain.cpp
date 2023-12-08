@@ -1,6 +1,7 @@
 #include "daisy_pod.h"
 #include "daisysp.h"
 
+#include "basic_exp.h"
 #include "chopper.h"
 #include "colors.h"
 #include "util.h"
@@ -33,7 +34,7 @@ Pin switchPins[switchCount] = {seed::D27, seed::D28, seed::D7, seed::D8, seed::D
 #define TEMPO_DEFAUT 120
 #define TEMPO_MAX 240
 
-static DaisyPod pod;
+static BasicExp pod;
 static Chopper chopper;
 static Utilities util;
 static Parameter chopperPw;
