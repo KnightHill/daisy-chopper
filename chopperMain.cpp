@@ -11,30 +11,11 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-// #define BASIC_EXP 1
-
-// Basic Expansion Control Definitions
-// TODO: Add ProcessAnalog/Digital Controls
-std::vector<AnalogControl> knobs;
-std::vector<Switch> switches;
-
-const uint16_t knobCount = 4;
-const uint16_t switchCount = 4;
-
-// Include both pod's and expansion board knobs
-Pin knobPins[knobCount] = {seed::D21, seed::D15, seed::D22, seed::D16};
-Pin switchPins[switchCount] = {seed::D7, seed::D8, seed::D9, seed::D10};
-
-/*
-// Include both pod's and expansion board switches
-Pin switchPins[switchCount] = {seed::D27, seed::D28, seed::D7, seed::D8, seed::D9, seed::D10};
-*/
-
 #define TEMPO_MIN 30
 #define TEMPO_DEFAUT 120
 #define TEMPO_MAX 240
 
-static BasicExp pod;
+static BasicExp hw;
 static Chopper chopper;
 static Utilities util;
 static Parameter chopperPw;
@@ -73,7 +54,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   for (size_t i = 0; i < size; i += 2) {
     const float cout = chopper.Process();
     const float gate = active ? cout : 1.0f;
-    pod.seed.SetLed(cout != 0.0f && active);
+    hw.seed.SetLed(cout != 0.0f && active);
 
     float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
     float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
@@ -85,7 +66,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
 
 void Controls(void)
 {
-  pod.ProcessAllControls();
+  hw.ProcessAllControls();
 
   UpdateButtons();
   UpdateEncoder();
@@ -106,13 +87,13 @@ bool ConditionalParameter(float oldVal, float newVal, float &param, float update
 
 void UpdateButtons(void)
 {
-  if (pod.button1.RisingEdge()) {
+  if (hw.button1.RisingEdge()) {
     active = !active;
     if (active)
       chopper.Reset();
   }
 
-  if (pod.button2.RisingEdge()) {
+  if (hw.button2.RisingEdge()) {
     uint32_t ms = System::GetNow();
     uint32_t diff = ms - prev_ms;
     uint32_t bpm = TempoUtils::ms_to_bpm(diff);
@@ -124,11 +105,8 @@ void UpdateButtons(void)
     prev_ms = ms;
   }
 
-#ifdef BASIC_EXP
-  // if (pod.button3.RisingEdge())
-  if (switches[0].RisingEdge())
+  if (hw.button3.RisingEdge())
     chopper.Reset();
-#endif
 }
 
 void UpdateLED(RgbLed &led, uint8_t value)
@@ -160,17 +138,17 @@ void UpdateLED(RgbLed &led, uint8_t value)
 
 void UpdateLEDs(void)
 {
-  //  pod.seed.SetLed(active);
+  //  hw.seed.SetLed(active);
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
-  UpdateLED(pod.led1, led1);
-  UpdateLED(pod.led2, led2);
-  pod.UpdateLeds();
+  UpdateLED(hw.led1, led1);
+  UpdateLED(hw.led2, led2);
+  hw.UpdateLeds();
 }
 
 void UpdateKnobs(void)
 {
-  float k1 = pod.knob1.Process();
+  float k1 = hw.knob1.Process();
   float k2 = dryWetMix.Process();
 
   if (ConditionalParameter(oldk1, k1, fChopperPw, chopperPw.Process()))
@@ -185,12 +163,12 @@ void UpdateKnobs(void)
 
 void UpdateEncoder(void)
 {
-  if (pod.encoder.RisingEdge()) {
+  if (hw.encoder.RisingEdge()) {
     tempo = TEMPO_DEFAUT;
     chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   }
 
-  int32_t inc = pod.encoder.Increment();
+  int32_t inc = hw.encoder.Increment();
   if (inc == 1)
     chopper.NextPattern();
   else if (inc == -1)
@@ -217,34 +195,6 @@ void HandleSystemRealTime(uint8_t srt_type)
   }
 }
 
-void InitExpansionControls()
-{
-  // Init knobs
-  // Set order of ADCs based on CHANNEL NUMBER
-  AdcChannelConfig cfg[knobCount];
-
-  // Init with Single Pins
-  for (int i = 0; i < knobCount; i++) {
-    cfg[i].InitSingle(knobPins[i]);
-  }
-
-  pod.seed.adc.Init(cfg, knobCount);
-
-  // Setup the Knobs
-  for (int i = 0; i < knobCount; i++) {
-    AnalogControl myKnob;
-    myKnob.Init(pod.seed.adc.GetPtr(i), pod.seed.AudioCallbackRate());
-    knobs.push_back(myKnob);
-  }
-
-  // Init switches
-  for (int i = 0; i < switchCount; i++) {
-    Switch mySwitch;
-    mySwitch.Init(switchPins[i]);
-    switches.push_back(mySwitch);
-  }
-}
-
 void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
@@ -257,26 +207,22 @@ void InitSynth(void)
   prev_ms = 0;
   tt_count = 0;
 
-  pod.Init();
-  pod.SetAudioBlockSize(4);
+  hw.Init();
+  hw.SetAudioBlockSize(4);
 
-  util.Init(&pod);
+  util.Init(&hw);
 
-#ifdef BASIC_EXP
-  InitExpansionControls();
-#endif
-
-  float sample_rate = pod.AudioSampleRate();
+  float sample_rate = hw.AudioSampleRate();
   chopper.Init(sample_rate);
   chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   chopper.SetAmp(1.0f);
   chopper.SetPw(fChopperPw);
 
-  chopperPw.Init(pod.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
-  dryWetMix.Init(pod.knob2, 0.2f, 1.0f, dryWetMix.LINEAR);
+  chopperPw.Init(hw.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
+  dryWetMix.Init(hw.knob2, 0.2f, 1.0f, dryWetMix.LINEAR);
 
   // initialize the logger
-  pod.seed.StartLog(false);
+  hw.seed.StartLog(false);
 
   util.BlinkLED(WHITE);
 }
@@ -285,14 +231,14 @@ int main(void)
 {
   InitSynth();
 
-  pod.StartAdc();
-  pod.StartAudio(AudioCallback);
-  pod.midi.StartReceive();
+  hw.StartAdc();
+  hw.StartAudio(AudioCallback);
+  hw.midi.StartReceive();
 
   while (true) {
-    pod.midi.Listen();
-    while (pod.midi.HasEvents()) {
-      MidiEvent m = pod.midi.PopEvent();
+    hw.midi.Listen();
+    while (hw.midi.HasEvents()) {
+      MidiEvent m = hw.midi.PopEvent();
       if (m.type == SystemRealTime) {
         HandleSystemRealTime(m.srt_type);
       }
