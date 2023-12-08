@@ -85,6 +85,15 @@ void Chopper::PrevPattern(bool reset)
 
 float Chopper::CalcPhaseInc(float f) { return (TWOPI_F * f) * sr_recip_; }
 
+uint16_t Chopper::GetQuadrant(float numQuadrants)
+{
+  float phase = phase_;
+  if (phase > TWOPI_F)
+    phase = TWOPI_F;
+
+  return static_cast<uint16_t>(phase * numQuadrants / TWOPI_F);
+}
+
 float Chopper::Process()
 {
   float gate = ProcessGate();

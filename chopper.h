@@ -94,6 +94,8 @@ public:
    */
   void Reset(float phase = 0.0f);
 
+  uint16_t GetQuadrant(float numQuadrants = 4.0f);
+
   // Pattern methods
   void NextPattern(bool reset = true);
   void PrevPattern(bool reset = true);
