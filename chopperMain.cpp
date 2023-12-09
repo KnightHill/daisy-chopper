@@ -212,7 +212,7 @@ void InitSynth(void)
 
   util.Init(&hw);
 
-  float sample_rate = hw.AudioSampleRate();
+  const float sample_rate = hw.AudioSampleRate();
   chopper.Init(sample_rate);
   chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   chopper.SetAmp(1.0f);

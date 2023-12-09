@@ -110,7 +110,7 @@ float Chopper::ProcessGate()
 {
   float out;
   float quadrant = floorf(phase_ / HALFPI_F);
-  int16_t quadrant_index = (int16_t)quadrant;
+  int16_t quadrant_index = static_cast<int16_t>(quadrant);
 
   if (quadrant_index != old_quadrant_index_) {
     note_ = Patterns[current_pattern_].notes[pattern_step_];

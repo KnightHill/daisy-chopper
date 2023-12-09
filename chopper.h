@@ -8,8 +8,8 @@
 namespace bytebeat
 {
 
-#define PATTERN_STEPS_MAX 16
-#define PATTERNS_MAX 13
+constexpr uint16_t PATTERNS_MAX = 13;
+constexpr uint16_t PATTERN_STEPS_MAX = 16;
 
 enum NoteDuration {
   D4, // quarter
