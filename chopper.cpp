@@ -113,6 +113,8 @@ float Chopper::ProcessGate()
   int16_t quadrant_index = static_cast<int16_t>(quadrant);
 
   if (quadrant_index != old_quadrant_index_) {
+
+    // Increment the pattern step based on the nore duration
     note_ = Patterns[current_pattern_].notes[pattern_step_];
     switch (note_.duration) {
     case D16:
@@ -131,6 +133,7 @@ float Chopper::ProcessGate()
     old_quadrant_index_ = quadrant_index;
   }
 
+  // Set the gate according to note duration, phase and duty
   if (note_.duration == D16) {
     if (phase_ - (HALFPI_F * quadrant_index) < pw_rad_ / 4.0f)
       out = note_.active ? 1.0f : 0.0f;
