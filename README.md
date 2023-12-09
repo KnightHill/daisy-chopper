@@ -146,6 +146,8 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 # TODO
 
+- Improve core engine
+- Implement pattern editor
 - Full MIDI control (program change, CC for PW and mix)
 - ~~Remove base expander code from libDaisy~~
 - ~~Fix clicking~~ 
