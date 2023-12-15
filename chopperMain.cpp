@@ -229,7 +229,7 @@ void InitSynth(void)
 
   chopperPw.Init(hw.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
   dryWetMix.Init(hw.knob2, 0.2f, 1.0f, dryWetMix.LINEAR);
-  attack.Init(hw.knob3, 0.1f, 0.5f, attack.LINEAR);
+  attack.Init(hw.knob3, 0.02f, 0.2f, attack.LINEAR);
 
   // initialize the logger
   hw.seed.StartLog(false);

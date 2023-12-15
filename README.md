@@ -140,7 +140,7 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 | Button 3 | Reset pattern step | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | Dry/Wet Mix (20%-100%) | pod |
-| Seed LED | Slicer status (On/Off) | seed |
+| Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
 | LED 1 | Pattern indicator | pod |
 | LED 2 | Pattern indicator | pod |
 
