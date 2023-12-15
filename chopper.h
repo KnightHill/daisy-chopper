@@ -8,7 +8,7 @@
 namespace bytebeat
 {
 
-constexpr uint16_t PATTERNS_MAX = 13;
+constexpr uint16_t PATTERNS_MAX = 16;
 constexpr uint16_t PATTERN_STEPS_MAX = 16;
 
 enum NoteDuration {
