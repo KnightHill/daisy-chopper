@@ -178,8 +178,8 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 - Improve core engine
 - Implement pattern editor
-- Add Attack control
 - Full MIDI control (program change, CC for PW and mix)
+- ~~Add Attack control~~
 - ~~Remove base expander code from libDaisy~~
 - ~~Fix clicking~~ 
 - ~~EG/ADSR~~
