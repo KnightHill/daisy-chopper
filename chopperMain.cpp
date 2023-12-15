@@ -20,6 +20,7 @@ static Chopper chopper;
 static Utilities util;
 static Parameter chopperPw;
 static Parameter dryWetMix;
+static Parameter attack;
 
 // http://bradthemad.org/guitar/tempo_explanation.php
 // Freq(Hz) = BPM / 60
@@ -29,7 +30,8 @@ static uint8_t tempo;
 static bool active;
 static float fChopperPw;
 static float fDryWetMix;
-static float oldk1, oldk2;
+static float fAttack;
+static float oldk1, oldk2, oldk3;
 
 // tap tempo variables
 static uint32_t prev_ms;
@@ -150,6 +152,7 @@ void UpdateKnobs(void)
 {
   float k1 = hw.knob1.Process();
   float k2 = dryWetMix.Process();
+  float k3 = attack.Process();
 
   if (ConditionalParameter(oldk1, k1, fChopperPw, chopperPw.Process()))
     chopper.SetPw(fChopperPw);
@@ -157,8 +160,12 @@ void UpdateKnobs(void)
   if (ConditionalParameter(oldk2, k2, fDryWetMix, k2))
     fDryWetMix = k2;
 
+  if (ConditionalParameter(oldk3, k3, fAttack, attack.Process()))
+    chopper.SetAttack(fAttack);
+
   oldk1 = k1;
   oldk2 = k2;
+  oldk3 = k3;
 }
 
 void UpdateEncoder(void)
@@ -199,10 +206,11 @@ void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
   active = false;
-  oldk1 = 0;
-  oldk2 = 0;
+  oldk1 = oldk2 = oldk3 = 0;
+
   fChopperPw = 0.3f;
   fDryWetMix = 0.5f;
+  fAttack = 0.1f;
 
   prev_ms = 0;
   tt_count = 0;
@@ -217,9 +225,11 @@ void InitSynth(void)
   chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   chopper.SetAmp(1.0f);
   chopper.SetPw(fChopperPw);
+  chopper.SetAttack(fAttack);
 
   chopperPw.Init(hw.knob1, 0.1f, 0.9f, chopperPw.LINEAR);
   dryWetMix.Init(hw.knob2, 0.2f, 1.0f, dryWetMix.LINEAR);
+  attack.Init(hw.knob3, 0.1f, 0.5f, attack.LINEAR);
 
   // initialize the logger
   hw.seed.StartLog(false);
