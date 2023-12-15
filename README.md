@@ -126,6 +126,36 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 <td>1</td><td>1</td><td>1</td><td>1</td>
 </tr>
 
+<tr>
+<td>14</td>
+<td>GREEN</td>
+<td>WHITE</td>
+<td colspan="2">1</td><td>1</td><td>0</td>
+<td>1</td><td>0</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td>1</td><td>1</td><td>1</td><td>1</td>
+</tr>
+
+<tr>
+<td>15</td>
+<td>BLUE</td>
+<td>RED</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td>0</td><td>1</td><td>1</td><td>1</td>
+<td colspan="2">1</td><td>1</td><td>1</td>
+<td>0</td><td>1</td><td>0</td><td>1</td>
+</tr>
+
+<tr>
+<td>16</td>
+<td>BLUE</td>
+<td>GREEN</td>
+<td colspan="2">1</td><td>0</td><td>1</td>
+<td>1</td><td>0</td><td>1</td><td>1</td>
+<td colspan="2">0</td><td>1</td><td>1</td>
+<td>0</td><td>1</td><td>0</td><td>1</td>
+</tr>
+
 </tbody>
 </table>
 
