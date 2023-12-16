@@ -8,6 +8,8 @@ Tempo can be set using tap tempo (button 2) or MIDI clock.
 
 Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](https://github.com/KnightHill/daisy-basic-expander).
 
+There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-editor) to help generate additional patterns.
+
 # Patterns
 
 <table>
@@ -177,8 +179,8 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 # TODO
 
 - Improve core engine
-- Implement pattern editor
 - Full MIDI control (program change, CC for PW and mix)
+- ~~Implement pattern editor~~
 - ~~Add Attack control~~
 - ~~Remove base expander code from libDaisy~~
 - ~~Fix clicking~~ 
