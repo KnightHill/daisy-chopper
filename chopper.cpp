@@ -38,11 +38,9 @@ Pattern Chopper::Patterns[PATTERNS_MAX] = {
     {12, {{1, D16}, {1, D16}, {1, D8}, {1, D16}, {1, D16}, {1, D8}, {1, D16}, {0, D16}, {1, D8}, {1, D16}, {0, D16}, {1, D8}}},
     {11, {{1, D16}, {1, D16}, {1, D8}, {1, D16}, {0, D16}, {1, D8}, {1, D8}, {1, D8}, {1, D8}, {1, D16}, {1, D16}}},
     {16, {{1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}, {1, D16}, {1, D16}, {0, D16}, {1, D16}}},
-    {16, {{1, D4}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D4}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D4}, {1, D8}, {1, D8}, {1, D4}, {0, D8}, {1, D8}}},
+    {16, {{1, D4}, {1, D16}, {1, D16}, {1, D16}, {1, D16}, {1, D4}, {1, D16}, {0, D16}, {0, D16}, {1, D16}, {1, D4}, {1, D8}, {1, D8}, {1, D4}, {0, D8}, {1, D8}}}
 
 };
-
-// 3/4 - doesn't work:    {8, {{1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}, {1, D4}, {1, D8}}}
 
 void Chopper::Init(float sample_rate)
 {
@@ -130,7 +128,7 @@ float Chopper::ProcessGate()
 
   if (quadrant_index != old_quadrant_index_) {
 
-    // Increment the pattern step based on the nore duration
+    // Increment the pattern step based on note duration
     note_ = Patterns[current_pattern_].notes[pattern_step_];
     switch (note_.duration) {
     case D16:
