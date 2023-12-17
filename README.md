@@ -170,6 +170,7 @@ There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
+| Button 4 | P.O. sync on/off | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | Dry/Wet Mix (20%-100%) | pod |
 | Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
@@ -178,6 +179,7 @@ There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-
 
 # TODO
 
+- Add PO sync support
 - Improve core engine
 - Full MIDI control (program change, CC for PW and mix)
 - ~~Implement pattern editor~~

@@ -33,6 +33,8 @@ static float fDryWetMix;
 static float fAttack;
 static float oldk1, oldk2, oldk3;
 
+static bool poSync;
+
 // tap tempo variables
 static uint32_t prev_ms;
 static uint16_t tt_count;
@@ -109,6 +111,9 @@ void UpdateButtons(void)
 
   if (hw.button3.RisingEdge())
     chopper.Reset();
+
+  if (hw.button4.RisingEdge())
+    poSync = !poSync;
 }
 
 void UpdateLED(RgbLed &led, uint8_t value)
@@ -214,6 +219,8 @@ void InitSynth(void)
 
   prev_ms = 0;
   tt_count = 0;
+
+  poSync = false;
 
   hw.Init();
   hw.SetAudioBlockSize(4);
