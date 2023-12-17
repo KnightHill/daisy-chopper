@@ -10,6 +10,10 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 
 There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-editor) to help generate additional patterns.
 
+Sync modes:
+- MIDI Clock 
+- Pocket Operator
+
 # Patterns
 
 <table>
