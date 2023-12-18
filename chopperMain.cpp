@@ -40,7 +40,7 @@ constexpr float threshold = 0.20f;
 static uint32_t prev_ms;
 static uint16_t tt_count;
 static uint32_t prev_timestamp;
-static float left_cached;
+static float sync_cached;
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -59,18 +59,12 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    const float cout = chopper.Process();
-    const float gate = active ? cout : 1.0f;
-    hw.seed.SetLed(cout != 0.0f && active);
-
-    float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
-    float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
-
     if (poSync) {
-      if (fabs(left - left_cached) > threshold) {
+      float sync = in[i];
+      if (fabs(sync - sync_cached) > threshold) {
         // detect sync raising edge
         // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
-        if (left_cached < threshold && left > threshold) {
+        if (sync_cached < threshold && sync > threshold) {
           // use usec
           uint32_t now = System::GetUs();
           uint32_t diff = now - prev_timestamp;
@@ -83,14 +77,20 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
 
           prev_timestamp = now;
         }
-        left_cached = left;
+        sync_cached = sync;
       }
 
       // left channel carries the PO sync signal
-      // left = right;
     }
 
-    out[i] = left;
+    const float cout = chopper.Process();
+    const float gate = active ? cout : 1.0f;
+    hw.seed.SetLed(cout != 0.0f && active);
+
+    float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
+    float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
+
+    out[i] = poSync ? right : left;
     out[i + 1] = right;
   }
 }
@@ -109,10 +109,10 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     float right = (0.5f * gate * fDryWetMix * in[1][i]) + (0.5f * (1.0f - fDryWetMix) * in[1][i]);
 
     if (poSync) {
-      if (fabs(left - left_cached) > threshold) {
+      if (fabs(left - sync_cached) > threshold) {
         // detect sync raising edge
         // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
-        if (left_cached < threshold && left > threshold) {
+        if (sync_cached < threshold && left > threshold) {
           // use usec
           uint32_t now = System::GetUs();
           uint32_t diff = now - prev_timestamp;
@@ -125,7 +125,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 
           prev_timestamp = now;
         }
-        left_cached = left;
+        sync_cached = left;
       }
 
       // left channel carries the PO sync signal
@@ -290,7 +290,7 @@ void InitSynth(void)
   prev_ms = 0;
   tt_count = 0;
   prev_timestamp = 0;
-  left_cached = 0;
+  sync_cached = 0;
 
   poSync = false;
 
