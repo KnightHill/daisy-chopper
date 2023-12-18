@@ -12,7 +12,9 @@ There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-
 
 Sync modes:
 - MIDI Clock 
-- Pocket Operator - modes SY1, SY2, and SY5
+- [TE Pocket Operator](https://teenage.engineering/guides/po-33/en) - modes SY1, SY2, and SY5
+
+MIDI clock and PO sync override tap tempo settings.
 
 # Patterns
 
