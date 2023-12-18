@@ -51,8 +51,7 @@ void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
 void InitExpansionControls();
 
-// TODO: Add PO sync
-// https://modwiggler.com/forum/viewtopic.php?t=189932
+/*
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
   Controls();
@@ -73,6 +72,30 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
 
     out[i] = left;
     out[i + 1] = right;
+  }
+}
+*/
+
+void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
+{
+  Controls();
+
+  for (size_t i = 0; i < size; i += 2) {
+    float right;
+    const float cout = chopper.Process();
+    const float gate = active ? cout : 1.0f;
+    hw.seed.SetLed(cout != 0.0f && active);
+
+    float left = (0.5f * gate * fDryWetMix * in[0][i]) + (0.5f * (1.0f - fDryWetMix) * in[0][i]);
+    if (poSync) {
+      // right channel carries the PO sync signal
+      right = left;
+    } else {
+      right = (0.5f * gate * fDryWetMix * in[1][i]) + (0.5f * (1.0f - fDryWetMix) * in[1][i]);
+    }
+
+    out[0][i] = left;
+    out[1][i] = right;
   }
 }
 
