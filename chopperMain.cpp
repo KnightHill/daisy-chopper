@@ -63,6 +63,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
       float sync = in[i];
       if (fabs(sync - sync_cached) > threshold) {
         // detect sync raising edge
+        // left channel carries the PO sync signal
         // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
         if (sync_cached < threshold && sync > threshold) {
           // use usec
@@ -74,13 +75,10 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
             tempo = bpm;
             chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
           }
-
           prev_timestamp = now;
         }
         sync_cached = sync;
       }
-
-      // left channel carries the PO sync signal
     }
 
     const float cout = chopper.Process();
@@ -332,7 +330,7 @@ int main(void)
         HandleSystemRealTime(m.srt_type);
       }
     }
-    System::Delay(1000);
-    hw.seed.PrintLine("tempo: %d", tempo);
+    // System::Delay(1000);
+    // hw.seed.PrintLine("tempo: %d", tempo);
   }
 }
