@@ -185,6 +185,7 @@ MIDI clock and PO sync override tap tempo settings.
 
 # TODO
 
+- Change tap tempo/MIDI clock to use uSec resolution
 - Improve core engine
 - Full MIDI control (program change, CC for PW and mix)
 - ~~Add PO sync support~~

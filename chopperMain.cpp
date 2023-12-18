@@ -93,49 +93,6 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   }
 }
 
-/*
-void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
-{
-  Controls();
-
-  for (size_t i = 0; i < size; i += 2) {
-    const float cout = chopper.Process();
-    const float gate = active ? cout : 1.0f;
-    hw.seed.SetLed(cout != 0.0f && active);
-
-    float left = (0.5f * gate * fDryWetMix * in[0][i]) + (0.5f * (1.0f - fDryWetMix) * in[0][i]);
-    float right = (0.5f * gate * fDryWetMix * in[1][i]) + (0.5f * (1.0f - fDryWetMix) * in[1][i]);
-
-    if (poSync) {
-      if (fabs(left - sync_cached) > threshold) {
-        // detect sync raising edge
-        // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
-        if (sync_cached < threshold && left > threshold) {
-          // use usec
-          uint32_t now = System::GetUs();
-          uint32_t diff = now - prev_timestamp;
-          uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
-
-          if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-            tempo = bpm;
-            chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-          }
-
-          prev_timestamp = now;
-        }
-        sync_cached = left;
-      }
-
-      // left channel carries the PO sync signal
-      left = right;
-    }
-
-    out[0][i] = left;
-    out[1][i] = right;
-  }
-}
-*/
-
 void Controls(void)
 {
   hw.ProcessAllControls();
