@@ -35,9 +35,12 @@ static float oldk1, oldk2, oldk3;
 
 static bool poSync;
 
-// tap tempo variables
+// tap tempo/PO sync variables
+constexpr float threshold = 0.20f;
 static uint32_t prev_ms;
 static uint16_t tt_count;
+static uint32_t prev_timestamp;
+static float left_cached;
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -51,53 +54,89 @@ void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
 void InitExpansionControls();
 
-/*
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    float right;
     const float cout = chopper.Process();
     const float gate = active ? cout : 1.0f;
     hw.seed.SetLed(cout != 0.0f && active);
 
     float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
+    float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
+
     if (poSync) {
-      // right channel carries the PO sync signal
-      right = left;
-    } else {
-      right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
+      if (fabs(left - left_cached) > threshold) {
+        // detect sync raising edge
+        // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
+        if (left_cached < threshold && left > threshold) {
+          // use usec
+          uint32_t now = System::GetUs();
+          uint32_t diff = now - prev_timestamp;
+          uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
+
+          if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
+            tempo = bpm;
+            chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+          }
+
+          prev_timestamp = now;
+        }
+        left_cached = left;
+      }
+
+      // left channel carries the PO sync signal
+      // left = right;
     }
 
     out[i] = left;
     out[i + 1] = right;
   }
 }
-*/
 
+/*
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    float right;
     const float cout = chopper.Process();
     const float gate = active ? cout : 1.0f;
     hw.seed.SetLed(cout != 0.0f && active);
 
     float left = (0.5f * gate * fDryWetMix * in[0][i]) + (0.5f * (1.0f - fDryWetMix) * in[0][i]);
+    float right = (0.5f * gate * fDryWetMix * in[1][i]) + (0.5f * (1.0f - fDryWetMix) * in[1][i]);
+
     if (poSync) {
-      // right channel carries the PO sync signal
-      right = left;
-    } else {
-      right = (0.5f * gate * fDryWetMix * in[1][i]) + (0.5f * (1.0f - fDryWetMix) * in[1][i]);
+      if (fabs(left - left_cached) > threshold) {
+        // detect sync raising edge
+        // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
+        if (left_cached < threshold && left > threshold) {
+          // use usec
+          uint32_t now = System::GetUs();
+          uint32_t diff = now - prev_timestamp;
+          uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
+
+          if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
+            tempo = bpm;
+            chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+          }
+
+          prev_timestamp = now;
+        }
+        left_cached = left;
+      }
+
+      // left channel carries the PO sync signal
+      left = right;
     }
 
     out[0][i] = left;
     out[1][i] = right;
   }
 }
+*/
 
 void Controls(void)
 {
@@ -250,6 +289,8 @@ void InitSynth(void)
 
   prev_ms = 0;
   tt_count = 0;
+  prev_timestamp = 0;
+  left_cached = 0;
 
   poSync = false;
 
@@ -291,5 +332,7 @@ int main(void)
         HandleSystemRealTime(m.srt_type);
       }
     }
+    System::Delay(1000);
+    hw.seed.PrintLine("tempo: %d", tempo);
   }
 }
