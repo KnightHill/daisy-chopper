@@ -35,11 +35,11 @@ static float oldk1, oldk2, oldk3;
 
 static bool poSync;
 
-// tap tempo/PO sync variables
-constexpr float threshold = 0.20f;
-static uint16_t tt_count;
-static uint32_t prev_timestamp;
-static float sync_cached;
+// Tap tempo/PO sync/MIDI clock variables
+constexpr float threshold = 0.20f; // PO sync signal threshold
+static uint16_t tt_count;          // MIDI clock click count
+static float sync_cached;          // PO sync signal cached value
+static uint32_t prev_timestamp;    // saved tempo click timestamp in uSecs
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -52,6 +52,7 @@ void Controls(void);
 void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
 void InitExpansionControls();
+void SetTempoFromDelay();
 
 void SetTempoFromDelay()
 {
