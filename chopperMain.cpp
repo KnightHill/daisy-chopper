@@ -37,7 +37,6 @@ static bool poSync;
 
 // tap tempo/PO sync variables
 constexpr float threshold = 0.20f;
-static uint32_t prev_ms;
 static uint16_t tt_count;
 static uint32_t prev_timestamp;
 static float sync_cached;
@@ -54,6 +53,20 @@ void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
 void InitExpansionControls();
 
+void SetTempoFromDelay()
+{
+  uint32_t now = System::GetUs();
+  uint32_t diff = now - prev_timestamp;
+  uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
+
+  if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
+    tempo = bpm;
+    chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+  }
+
+  prev_timestamp = now;
+}
+
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
   Controls();
@@ -66,16 +79,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
         // left channel carries the PO sync signal
         // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
         if (sync_cached < threshold && sync > threshold) {
-          // use usec
-          uint32_t now = System::GetUs();
-          uint32_t diff = now - prev_timestamp;
-          uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
-
-          if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-            tempo = bpm;
-            chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-          }
-          prev_timestamp = now;
+          SetTempoFromDelay();
         }
         sync_cached = sync;
       }
@@ -123,15 +127,7 @@ void UpdateButtons(void)
   }
 
   if (hw.button2.RisingEdge()) {
-    uint32_t ms = System::GetNow();
-    uint32_t diff = ms - prev_ms;
-    uint32_t bpm = TempoUtils::ms_to_bpm(diff);
-    if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-      tempo = bpm;
-      chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-    }
-
-    prev_ms = ms;
+    SetTempoFromDelay();
   }
 
   if (hw.button3.RisingEdge())
@@ -218,15 +214,7 @@ void HandleSystemRealTime(uint8_t srt_type)
   if (srt_type == TimingClock && poSync == false) {
     tt_count++;
     if (tt_count == 24) {
-      uint32_t ms = System::GetNow();
-      uint32_t diff = ms - prev_ms;
-      uint32_t bpm = TempoUtils::ms_to_bpm(diff);
-      if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-        tempo = bpm;
-        chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-      }
-
-      prev_ms = ms;
+      SetTempoFromDelay();
       tt_count = 0;
     }
   }
@@ -242,7 +230,6 @@ void InitSynth(void)
   fDryWetMix = 0.5f;
   fAttack = 0.1f;
 
-  prev_ms = 0;
   tt_count = 0;
   prev_timestamp = 0;
   sync_cached = 0;
