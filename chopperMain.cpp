@@ -11,9 +11,9 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-constexpr uint8_t TEMPO_MIN = 30;
-constexpr uint8_t TEMPO_DEFAUT = 120;
-constexpr uint8_t TEMPO_MAX = 240;
+constexpr uint32_t TEMPO_MIN = 30;
+constexpr uint32_t TEMPO_DEFAUT = 120;
+constexpr uint32_t TEMPO_MAX = 240;
 
 static BasicExp hw;
 static Chopper chopper;
