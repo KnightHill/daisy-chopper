@@ -6,6 +6,7 @@
 #include "colors.h"
 #include "util.h"
 #include "tempo_utils.h"
+#include "timePeriod.h"
 
 using namespace daisysp;
 using namespace daisy;
@@ -37,10 +38,12 @@ static float oldk1, oldk2, oldk3;
 
 // Tap tempo/PO sync/MIDI clock variables
 constexpr float threshold = 0.20f; // PO sync signal threshold
-static SyncModes syncMode;
-static uint16_t tt_count;       // MIDI clock click count
-static float sync_cached;       // PO sync signal cached value
-static uint32_t prev_timestamp; // saved tempo click timestamp in uSecs
+static SyncModes syncMode;         // sync mode (tap tempo, midi, PO)
+static bool syncModeChanged;       // indicates sync mode change
+static TimePeriod syncIndicator;   // sync mode LED indicator
+static uint16_t tt_count;          // MIDI clock click count
+static float sync_cached;          // PO sync signal cached value
+static uint32_t prev_timestamp;    // saved tempo click timestamp in uSecs
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -146,6 +149,9 @@ void UpdateButtons(void)
       } else if (syncMode == POSync) {
         syncMode = TapTempo;
       }
+
+      syncModeChanged = true;
+      syncIndicator.Init(1000); // show LED color change for 1 second
     }
   }
 }
@@ -177,11 +183,35 @@ void UpdateLED(RgbLed &led, uint8_t value)
   }
 }
 
+void ShowSyncMode()
+{
+  switch (syncMode) {
+  case TapTempo:
+    hw.led1.Set(WHITE);
+    break;
+  case MidiClock:
+    hw.led1.Set(GOLD);
+    break;
+  case POSync:
+    hw.led1.Set(CYAN);
+  }
+}
+
 void UpdateLEDs(void)
 {
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
-  UpdateLED(hw.led1, led1);
+
+  if (syncModeChanged) {
+    if (!syncIndicator.Elapsed()) {
+      ShowSyncMode();
+    } else {
+      syncModeChanged = false;
+    }
+  } else {
+    UpdateLED(hw.led1, led1);
+  }
+
   UpdateLED(hw.led2, led2);
   hw.UpdateLeds();
 }
@@ -243,6 +273,7 @@ void InitSynth(void)
   fAttack = 0.1f;
 
   syncMode = TapTempo;
+  syncModeChanged = false;
   tt_count = 0;
   prev_timestamp = 0;
   sync_cached = 0;
