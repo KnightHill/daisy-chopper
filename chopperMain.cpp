@@ -7,6 +7,7 @@
 #include "util.h"
 #include "tempo_utils.h"
 #include "timePeriod.h"
+#include "event.h"
 
 using namespace daisysp;
 using namespace daisy;
@@ -14,6 +15,7 @@ using namespace bytebeat;
 
 enum SyncModes { TapTempo, MidiClock, POSync };
 
+constexpr uint32_t EVENT_QUEUE_SIZE = 24;
 constexpr uint32_t TEMPO_MIN = 30;
 constexpr uint32_t TEMPO_DEFAUT = 120;
 constexpr uint32_t TEMPO_MAX = 240;
@@ -44,6 +46,9 @@ static TimePeriod syncIndicator;   // sync mode LED indicator
 static uint16_t tt_count;          // MIDI clock click count
 static float sync_cached;          // PO sync signal cached value
 static uint32_t prev_timestamp;    // saved tempo click timestamp in uSecs
+
+// event queue
+FIFO<Event, EVENT_QUEUE_SIZE> eventQueue;
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);

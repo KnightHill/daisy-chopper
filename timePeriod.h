@@ -2,6 +2,8 @@
 #ifndef TIME_PERIOD_H
 #define TIME_PERIOD_H
 
+#ifdef __cplusplus
+
 namespace bytebeat
 {
 
@@ -18,13 +20,14 @@ public:
   bool Elapsed();
 
   /** returns the time period duration in milliseconds */
-  inline uint32_t GetDuration() { return duration_; }
+  inline uint32_t GetDuration() { return m_duration; }
 
 private:
-  uint32_t start_;
-  uint32_t duration_;
+  uint32_t m_start;
+  uint32_t m_duration;
 };
 
 } // namespace bytebeat
 
+#endif
 #endif
