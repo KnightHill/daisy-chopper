@@ -11,6 +11,8 @@ using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
+enum SyncModes { TapTempo, MidiClock, POSync };
+
 constexpr uint32_t TEMPO_MIN = 30;
 constexpr uint32_t TEMPO_DEFAUT = 120;
 constexpr uint32_t TEMPO_MAX = 240;
@@ -33,13 +35,12 @@ static float fDryWetMix;
 static float fAttack;
 static float oldk1, oldk2, oldk3;
 
-static bool poSync;
-
 // Tap tempo/PO sync/MIDI clock variables
 constexpr float threshold = 0.20f; // PO sync signal threshold
-static uint16_t tt_count;          // MIDI clock click count
-static float sync_cached;          // PO sync signal cached value
-static uint32_t prev_timestamp;    // saved tempo click timestamp in uSecs
+static SyncModes syncMode;
+static uint16_t tt_count;       // MIDI clock click count
+static float sync_cached;       // PO sync signal cached value
+static uint32_t prev_timestamp; // saved tempo click timestamp in uSecs
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -73,7 +74,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    if (poSync) {
+    if (syncMode == POSync) {
       float sync = in[i];
       if (fabs(sync - sync_cached) > threshold) {
         // detect sync raising edge
@@ -93,7 +94,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
     float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
     float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
 
-    out[i] = poSync ? right : left;
+    out[i] = (syncMode == POSync) ? right : left;
     out[i + 1] = right;
   }
 }
@@ -128,14 +129,24 @@ void UpdateButtons(void)
   }
 
   if (hw.button2.RisingEdge()) {
-    SetTempoFromDelay();
+    if (syncMode == TapTempo) {
+      SetTempoFromDelay();
+    }
   }
 
   if (hw.button3.RisingEdge())
     chopper.Reset();
 
-  if (hw.button4.RisingEdge())
-    poSync = !poSync;
+  if (hw.button4.RisingEdge()) {
+    // TODO changes sync mode
+    if (syncMode == TapTempo) {
+      syncMode = MidiClock;
+    } else if (syncMode == MidiClock) {
+      syncMode = POSync;
+    } else if (syncMode == POSync) {
+      syncMode = TapTempo;
+    }
+  }
 }
 
 void UpdateLED(RgbLed &led, uint8_t value)
@@ -212,7 +223,7 @@ void UpdateEncoder(void)
 void HandleSystemRealTime(uint8_t srt_type)
 {
   // MIDI Clock -  24 clicks per quarter note
-  if (srt_type == TimingClock && poSync == false) {
+  if (syncMode == MidiClock && srt_type == TimingClock) {
     tt_count++;
     if (tt_count == 24) {
       SetTempoFromDelay();
@@ -231,11 +242,10 @@ void InitSynth(void)
   fDryWetMix = 0.5f;
   fAttack = 0.1f;
 
+  syncMode = TapTempo;
   tt_count = 0;
   prev_timestamp = 0;
   sync_cached = 0;
-
-  poSync = false;
 
   hw.Init();
   hw.SetAudioBlockSize(4);
