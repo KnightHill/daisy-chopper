@@ -10,4 +10,4 @@ void TimePeriod::Init(uint32_t duration)
   duration_ = duration;
 }
 
-bool TimePeriod::Process() { return System::GetNow() > start_ + duration_; }
+bool TimePeriod::Elapsed() { return System::GetNow() > start_ + duration_; }
