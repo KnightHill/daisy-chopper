@@ -173,7 +173,7 @@ Sync modes are mutually excusive and can only be changed while the effect is off
 | Control | Description | Comment |
 | --- | --- | --- |
 | Encoder Turn | Change slicer pattern | pod |
-| Encoder Press | Set tempo to 120 BPM | pod |
+| Encoder Press | Set tempo to 120 BPM (only when the effect is off)| pod |
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
