@@ -185,9 +185,11 @@ MIDI clock and PO sync override tap tempo settings.
 
 # TODO
 
-- Change tap tempo/MIDI clock to use uSec resolution
+- Sync the oscillator with the selected sync mode clicks
+- Add 3 separate sync modes (tap tempo, MIDI Clock, PO Sync)
 - Improve core engine
 - Full MIDI control (program change, CC for PW and mix)
+- ~~Change tap tempo/MIDI clock to use uSec resolution~~
 - ~~Add PO sync support~~
 - ~~Implement pattern editor~~
 - ~~Add Attack control~~
