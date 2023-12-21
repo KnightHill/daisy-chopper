@@ -138,13 +138,14 @@ void UpdateButtons(void)
     chopper.Reset();
 
   if (hw.button4.RisingEdge()) {
-    // TODO changes sync mode
-    if (syncMode == TapTempo) {
-      syncMode = MidiClock;
-    } else if (syncMode == MidiClock) {
-      syncMode = POSync;
-    } else if (syncMode == POSync) {
-      syncMode = TapTempo;
+    if (!active) {
+      if (syncMode == TapTempo) {
+        syncMode = MidiClock;
+      } else if (syncMode == MidiClock) {
+        syncMode = POSync;
+      } else if (syncMode == POSync) {
+        syncMode = TapTempo;
+      }
     }
   }
 }
@@ -178,7 +179,6 @@ void UpdateLED(RgbLed &led, uint8_t value)
 
 void UpdateLEDs(void)
 {
-  //  hw.seed.SetLed(active);
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
   UpdateLED(hw.led1, led1);
