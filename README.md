@@ -186,10 +186,10 @@ Sync modes are mutually excusive and can only be changed while the effect is off
 
 # TODO
 
-- Add 3 separate sync modes (tap tempo, MIDI Clock, PO Sync)
 - Sync the oscillator with the selected sync mode clicks
 - Improve core engine
 - Full MIDI control (program change, CC for PW and mix)
+- ~~Add 3 separate sync modes (tap tempo, MIDI Clock, PO Sync)~~
 - ~~Change tap tempo/MIDI clock to use uSec resolution~~
 - ~~Add PO sync support~~
 - ~~Implement pattern editor~~
