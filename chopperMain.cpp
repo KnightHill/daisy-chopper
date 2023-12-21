@@ -238,7 +238,7 @@ void UpdateKnobs(void)
 
 void UpdateEncoder(void)
 {
-  if (hw.encoder.RisingEdge()) {
+  if (!active && hw.encoder.RisingEdge()) {
     tempo = TEMPO_DEFAUT;
     chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
   }
