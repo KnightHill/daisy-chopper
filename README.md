@@ -11,11 +11,11 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-editor) to help generate additional patterns.
 
 Sync modes:
-- Tap Tempo
-- MIDI Clock 
-- [TE Pocket Operator](https://teenage.engineering/guides/po-33/en) - sync modes SY1, SY2, and SY5
+- Tap Tempo (LED1 shows WHITE)
+- MIDI Clock (LED1 shows GOLD)
+- [TE Pocket Operator](https://teenage.engineering/guides/po-33/en) - sync modes SY1, SY2, and SY5 (LED1 shows CYAN)
 
-Sync modes are mutually excusive. 
+Sync modes are mutually excusive and can only be changed while the effect is off. LED1 will show the color code of the current sync mode for one second after the change. 
 
 # Patterns
 
