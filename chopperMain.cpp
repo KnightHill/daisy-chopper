@@ -6,14 +6,17 @@
 #include "colors.h"
 #include "util.h"
 #include "tempo_utils.h"
+#include "timePeriod.h"
 
 using namespace daisysp;
 using namespace daisy;
 using namespace bytebeat;
 
-#define TEMPO_MIN 30
-#define TEMPO_DEFAUT 120
-#define TEMPO_MAX 240
+enum SyncModes { TapTempo, MidiClock, POSync };
+
+constexpr uint32_t TEMPO_MIN = 30;
+constexpr uint32_t TEMPO_DEFAUT = 120;
+constexpr uint32_t TEMPO_MAX = 240;
 
 static BasicExp hw;
 static Chopper chopper;
@@ -33,14 +36,14 @@ static float fDryWetMix;
 static float fAttack;
 static float oldk1, oldk2, oldk3;
 
-static bool poSync;
-
-// tap tempo/PO sync variables
-constexpr float threshold = 0.20f;
-static uint32_t prev_ms;
-static uint16_t tt_count;
-static uint32_t prev_timestamp;
-static float sync_cached;
+// Tap tempo/PO sync/MIDI clock variables
+constexpr float threshold = 0.20f; // PO sync signal threshold
+static SyncModes syncMode;         // sync mode (tap tempo, midi, PO)
+static bool syncModeChanged;       // indicates sync mode change
+static TimePeriod syncIndicator;   // sync mode LED indicator
+static uint16_t tt_count;          // MIDI clock click count
+static float sync_cached;          // PO sync signal cached value
+static uint32_t prev_timestamp;    // saved tempo click timestamp in uSecs
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
@@ -53,29 +56,35 @@ void Controls(void);
 void InitSynth(void);
 void HandleSystemRealTime(uint8_t srt_type);
 void InitExpansionControls();
+void SetTempoFromDelay();
+
+void SetTempoFromDelay()
+{
+  uint32_t now = System::GetUs();
+  uint32_t diff = now - prev_timestamp;
+  uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
+
+  if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
+    tempo = bpm;
+    chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+  }
+
+  prev_timestamp = now;
+}
 
 void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::InterleavingOutputBuffer out, size_t size)
 {
   Controls();
 
   for (size_t i = 0; i < size; i += 2) {
-    if (poSync) {
+    if (syncMode == POSync) {
       float sync = in[i];
       if (fabs(sync - sync_cached) > threshold) {
         // detect sync raising edge
         // left channel carries the PO sync signal
         // Single pulse, 2.5ms long, with an amplitude of 1V above ground reference.
         if (sync_cached < threshold && sync > threshold) {
-          // use usec
-          uint32_t now = System::GetUs();
-          uint32_t diff = now - prev_timestamp;
-          uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
-
-          if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-            tempo = bpm;
-            chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-          }
-          prev_timestamp = now;
+          SetTempoFromDelay();
         }
         sync_cached = sync;
       }
@@ -88,7 +97,7 @@ void AudioCallback(AudioHandle::InterleavingInputBuffer in, AudioHandle::Interle
     float left = (0.5f * gate * fDryWetMix * in[i]) + (0.5f * (1.0f - fDryWetMix) * in[i]);
     float right = (0.5f * gate * fDryWetMix * in[i + 1]) + (0.5f * (1.0f - fDryWetMix) * in[i + 1]);
 
-    out[i] = poSync ? right : left;
+    out[i] = (syncMode == POSync) ? right : left;
     out[i + 1] = right;
   }
 }
@@ -123,22 +132,28 @@ void UpdateButtons(void)
   }
 
   if (hw.button2.RisingEdge()) {
-    uint32_t ms = System::GetNow();
-    uint32_t diff = ms - prev_ms;
-    uint32_t bpm = TempoUtils::ms_to_bpm(diff);
-    if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-      tempo = bpm;
-      chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+    if (syncMode == TapTempo) {
+      SetTempoFromDelay();
     }
-
-    prev_ms = ms;
   }
 
   if (hw.button3.RisingEdge())
     chopper.Reset();
 
-  if (hw.button4.RisingEdge())
-    poSync = !poSync;
+  if (hw.button4.RisingEdge()) {
+    if (!active) {
+      if (syncMode == TapTempo) {
+        syncMode = MidiClock;
+      } else if (syncMode == MidiClock) {
+        syncMode = POSync;
+      } else if (syncMode == POSync) {
+        syncMode = TapTempo;
+      }
+
+      syncModeChanged = true;
+      syncIndicator.Init(1000); // show LED color change for 1 second
+    }
+  }
 }
 
 void UpdateLED(RgbLed &led, uint8_t value)
@@ -168,12 +183,35 @@ void UpdateLED(RgbLed &led, uint8_t value)
   }
 }
 
+void ShowSyncMode()
+{
+  switch (syncMode) {
+  case TapTempo:
+    hw.led1.Set(WHITE);
+    break;
+  case MidiClock:
+    hw.led1.Set(GOLD);
+    break;
+  case POSync:
+    hw.led1.Set(CYAN);
+  }
+}
+
 void UpdateLEDs(void)
 {
-  //  hw.seed.SetLed(active);
   uint8_t led1 = chopper.GetCurrentPattern() / 7;
   uint8_t led2 = chopper.GetCurrentPattern() % 7;
-  UpdateLED(hw.led1, led1);
+
+  if (syncModeChanged) {
+    if (!syncIndicator.Elapsed()) {
+      ShowSyncMode();
+    } else {
+      syncModeChanged = false;
+    }
+  } else {
+    UpdateLED(hw.led1, led1);
+  }
+
   UpdateLED(hw.led2, led2);
   hw.UpdateLeds();
 }
@@ -215,18 +253,10 @@ void UpdateEncoder(void)
 void HandleSystemRealTime(uint8_t srt_type)
 {
   // MIDI Clock -  24 clicks per quarter note
-  if (srt_type == TimingClock && poSync == false) {
+  if (syncMode == MidiClock && srt_type == TimingClock) {
     tt_count++;
     if (tt_count == 24) {
-      uint32_t ms = System::GetNow();
-      uint32_t diff = ms - prev_ms;
-      uint32_t bpm = TempoUtils::ms_to_bpm(diff);
-      if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-        tempo = bpm;
-        chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-      }
-
-      prev_ms = ms;
+      SetTempoFromDelay();
       tt_count = 0;
     }
   }
@@ -242,12 +272,11 @@ void InitSynth(void)
   fDryWetMix = 0.5f;
   fAttack = 0.1f;
 
-  prev_ms = 0;
+  syncMode = TapTempo;
+  syncModeChanged = false;
   tt_count = 0;
   prev_timestamp = 0;
   sync_cached = 0;
-
-  poSync = false;
 
   hw.Init();
   hw.SetAudioBlockSize(4);

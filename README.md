@@ -11,10 +11,11 @@ Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](http
 There is a ncurses-based [editor](https://github.com/KnightHill/chopper-pattern-editor) to help generate additional patterns.
 
 Sync modes:
-- MIDI Clock 
-- [TE Pocket Operator](https://teenage.engineering/guides/po-33/en) - modes SY1, SY2, and SY5
+- Tap Tempo (LED1 shows WHITE)
+- MIDI Clock (LED1 shows GOLD)
+- [TE Pocket Operator](https://teenage.engineering/guides/po-33/en) - sync modes SY1, SY2, and SY5 (LED1 shows CYAN)
 
-MIDI clock and PO sync override tap tempo settings.
+Sync modes are mutually excusive and can only be changed while the effect is off. LED1 will show the color code of the current sync mode for one second after the change. 
 
 # Patterns
 
@@ -176,7 +177,7 @@ MIDI clock and PO sync override tap tempo settings.
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
-| Button 4 | switch between MIDI clock and P.O. sync modes | basic expansion board |
+| Button 4 | Switch between Tap temp, MIDI clock, and P.O. sync modes. Modes can be changed only when the effect is off. | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | Dry/Wet Mix (20%-100%) | pod |
 | Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
@@ -185,9 +186,11 @@ MIDI clock and PO sync override tap tempo settings.
 
 # TODO
 
-- Change tap tempo/MIDI clock to use uSec resolution
+- Sync the oscillator with the selected sync mode clicks
 - Improve core engine
 - Full MIDI control (program change, CC for PW and mix)
+- ~~Add 3 separate sync modes (tap tempo, MIDI Clock, PO Sync)~~
+- ~~Change tap tempo/MIDI clock to use uSec resolution~~
 - ~~Add PO sync support~~
 - ~~Implement pattern editor~~
 - ~~Add Attack control~~
