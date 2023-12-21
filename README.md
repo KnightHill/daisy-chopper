@@ -176,7 +176,7 @@ MIDI clock and PO sync override tap tempo settings.
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
-| Button 4 | Switch between Tap temp, MIDI clock, and P.O. sync modes, Modes can be changed only when the effect is off. | basic expansion board |
+| Button 4 | Switch between Tap temp, MIDI clock, and P.O. sync modes. Modes can be changed only when the effect is off. | basic expansion board |
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | Dry/Wet Mix (20%-100%) | pod |
 | Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
