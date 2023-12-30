@@ -15,6 +15,8 @@ constexpr Pin SW_3_PIN = seed::D7;
 constexpr Pin SW_4_PIN = seed::D8;
 constexpr Pin SW_5_PIN = seed::D9;
 constexpr Pin SW_6_PIN = seed::D10;
+constexpr Pin SW_7_PIN = seed::D11;
+constexpr Pin SW_8_PIN = seed::D12;
 
 constexpr Pin ENC_A_PIN = seed::D26;
 constexpr Pin ENC_B_PIN = seed::D25;
@@ -29,8 +31,8 @@ constexpr Pin LED_2_B_PIN = seed::D23;
 
 constexpr Pin KNOB_1_PIN = seed::D21;
 constexpr Pin KNOB_2_PIN = seed::D15;
-constexpr Pin KNOB_3_PIN = seed::D22;
-constexpr Pin KNOB_4_PIN = seed::D16;
+constexpr Pin KNOB_3_PIN = seed::D16;
+constexpr Pin KNOB_4_PIN = seed::D22;
 
 /*
 // Leaving in place until older hardware is totally deprecated.
@@ -156,6 +158,8 @@ void BasicExp::ProcessDigitalControls()
   button4.Debounce();
   button5.Debounce();
   button6.Debounce();
+  button7.Debounce();
+  button8.Debounce();
 }
 
 void BasicExp::ClearLeds()
@@ -178,14 +182,14 @@ void BasicExp::UpdateLeds()
 
 void BasicExp::InitButtons()
 {
-  // button1
   button1.Init(SW_1_PIN);
-  // button2
   button2.Init(SW_2_PIN);
   button3.Init(SW_3_PIN);
   button4.Init(SW_4_PIN);
   button5.Init(SW_5_PIN);
   button6.Init(SW_6_PIN);
+  button7.Init(SW_7_PIN);
+  button8.Init(SW_8_PIN);
 
   buttons[BUTTON_1] = &button1;
   buttons[BUTTON_2] = &button2;
@@ -193,16 +197,15 @@ void BasicExp::InitButtons()
   buttons[BUTTON_4] = &button4;
   buttons[BUTTON_5] = &button5;
   buttons[BUTTON_6] = &button6;
+  buttons[BUTTON_7] = &button7;
+  buttons[BUTTON_8] = &button8;
 }
 
 void BasicExp::InitEncoder() { encoder.Init(ENC_A_PIN, ENC_B_PIN, ENC_CLICK_PIN); }
 
 void BasicExp::InitLeds()
 {
-  // LEDs are just going to be on/off for now.
-  // TODO: Add PWM support
   led1.Init(LED_1_R_PIN, LED_1_G_PIN, LED_1_B_PIN, true);
-
   led2.Init(LED_2_R_PIN, LED_2_G_PIN, LED_2_B_PIN, true);
 
   ClearLeds();

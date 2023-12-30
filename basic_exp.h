@@ -24,6 +24,8 @@ public:
     BUTTON_4,    /** & */
     BUTTON_5,    /** & */
     BUTTON_6,    /** & */
+    BUTTON_7,    /** & */
+    BUTTON_8,    /** & */
     BUTTON_LAST, /** &  */
   };
 
@@ -135,6 +137,8 @@ public:
       button4,               /**< & */
       button5,               /**< & */
       button6,               /**< & */
+      button7,               /**< & */
+      button8,               /**< & */
       *buttons[BUTTON_LAST]; /**< & */
   RgbLed led1,               /**< & */
       led2;                  /**< & */
