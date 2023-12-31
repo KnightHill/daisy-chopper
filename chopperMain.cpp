@@ -48,7 +48,7 @@ static float sync_cached;          // PO sync signal cached value
 static uint32_t prev_timestamp;    // saved tempo click timestamp in uSecs
 
 // event queue
-FIFO<Event, EVENT_QUEUE_SIZE> eventQueue;
+// FIFO<Event, EVENT_QUEUE_SIZE> eventQueue;
 
 // prototypes
 bool ConditionalParameter(float oldVal, float newVal, float &param, float update);
