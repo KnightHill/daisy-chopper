@@ -181,6 +181,7 @@ Sync modes are mutually excusive and can only be changed while the effect is off
 | Knob 1 | Set slicer PW ratio (10%-90%) | pod |
 | Knob 2 | Dry/Wet Mix (20%-100%) | pod |
 | Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
+| Knob 4 | N/A | basic expansion board |
 | LED 1 | Pattern indicator | pod |
 | LED 2 | Pattern indicator | pod |
 

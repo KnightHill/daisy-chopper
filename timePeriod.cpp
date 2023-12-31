@@ -6,8 +6,8 @@ using namespace daisy;
 
 void TimePeriod::Init(uint32_t duration)
 {
-  start_ = System::GetNow();
-  duration_ = duration;
+  m_start = System::GetNow();
+  m_duration = duration;
 }
 
-bool TimePeriod::Elapsed() { return System::GetNow() > start_ + duration_; }
+bool TimePeriod::Elapsed() { return System::GetNow() > m_start + m_duration; }
