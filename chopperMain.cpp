@@ -33,6 +33,7 @@ static Parameter attack;
 
 static uint8_t tempo;
 static bool active;
+static bool beat_sync;
 static float fChopperPw;
 static float fDryWetMix;
 static float fAttack;
@@ -72,6 +73,13 @@ void SetTempoFromDelay()
   if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
     tempo = bpm;
     chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+    
+    // probably not the best way
+    if(beat_sync) {
+      chopper.Reset();
+      beat_sync = false;
+    }
+
   }
 
   prev_timestamp = now;
@@ -130,21 +138,26 @@ bool ConditionalParameter(float oldVal, float newVal, float &param, float update
 
 void UpdateButtons(void)
 {
+  // effect on/off
   if (hw.button1.RisingEdge()) {
     active = !active;
     if (active)
       chopper.Reset();
   }
 
+  // tap tempo
   if (hw.button2.RisingEdge()) {
     if (syncMode == TapTempo) {
       SetTempoFromDelay();
     }
   }
 
-  if (hw.button3.RisingEdge())
+  // reset pattern step
+  if (hw.button3.RisingEdge()) {
     chopper.Reset();
+  }
 
+  // change sync mode
   if (hw.button4.RisingEdge()) {
     if (!active) {
       if (syncMode == TapTempo) {
@@ -158,6 +171,11 @@ void UpdateButtons(void)
       syncModeChanged = true;
       syncIndicator.Init(1000); // show LED color change for 1 second
     }
+  }
+
+  // activate beat sync mode
+  if (hw.button5.RisingEdge()) {
+    if(!beat_sync) beat_sync = true;
   }
 }
 
@@ -271,6 +289,7 @@ void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
   active = false;
+  beat_sync = false;
   oldk1 = oldk2 = oldk3 = 0;
 
   fChopperPw = 0.3f;
