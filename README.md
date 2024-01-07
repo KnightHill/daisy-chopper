@@ -14,6 +14,7 @@ Sync modes:
 - Tap Tempo (LED1 shows WHITE)
 - MIDI Clock (LED1 shows GOLD)
 - [TE Pocket Operator](https://teenage.engineering/guides/po-33/en) - sync modes SY1, SY2, and SY5 (LED1 shows CYAN)
+- [Korg Volca](https://www.korg-volca.com/en/) - requires 3.5mm TS to TRS splitter [cable](https://www.amazon.com/3-5mm-Stereo-Male-Plug-Cable/dp/B08XHBR8TJ?th=1) (LED1 shows CYAN)
 
 Sync modes are mutually excusive and can only be changed while the effect is off. LED1 will show the color code of the current sync mode for one second after the change. 
 
