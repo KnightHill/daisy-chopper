@@ -254,16 +254,17 @@ void UpdateEncoder(void)
   if (!active && hw.encoder.RisingEdge()) {
     tempo = TEMPO_DEFAUT;
     chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
+    chopper.Reset();
   }
 
   int32_t inc = hw.encoder.Increment();
   if (inc == 1) {
     chopper.NextPattern();
-    chopper.Reset();
+    // chopper.Reset();
   } else if (inc == -1) {
 
     chopper.PrevPattern();
-    chopper.Reset();
+    // chopper.Reset();
   }
 }
 
