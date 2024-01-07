@@ -33,7 +33,6 @@ static Parameter attack;
 
 static uint8_t tempo;
 static bool active;
-static bool beat_sync;
 static float fChopperPw;
 static float fDryWetMix;
 static float fAttack;
@@ -71,15 +70,11 @@ void SetTempoFromDelay()
   uint32_t bpm = TempoUtils::fus_to_bpm(diff) / 2;
 
   if (bpm >= TEMPO_MIN && bpm <= TEMPO_MAX) {
-    tempo = bpm;
-    chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
-    
-    // probably not the best way
-    if(beat_sync) {
+    if (tempo != bpm) {
+      tempo = bpm;
+      chopper.SetFreq(TempoUtils::tempo_to_freq(tempo));
       chopper.Reset();
-      beat_sync = false;
     }
-
   }
 
   prev_timestamp = now;
@@ -172,11 +167,6 @@ void UpdateButtons(void)
       syncIndicator.Init(1000); // show LED color change for 1 second
     }
   }
-
-  // activate beat sync mode
-  if (hw.button5.RisingEdge()) {
-    if(!beat_sync) beat_sync = true;
-  }
 }
 
 void UpdateLED(RgbLed &led, uint8_t value)
@@ -267,10 +257,14 @@ void UpdateEncoder(void)
   }
 
   int32_t inc = hw.encoder.Increment();
-  if (inc == 1)
+  if (inc == 1) {
     chopper.NextPattern();
-  else if (inc == -1)
+    chopper.Reset();
+  } else if (inc == -1) {
+
     chopper.PrevPattern();
+    chopper.Reset();
+  }
 }
 
 void HandleSystemRealTime(uint8_t srt_type)
@@ -289,7 +283,6 @@ void InitSynth(void)
 {
   tempo = TEMPO_DEFAUT; // 120 BPM
   active = false;
-  beat_sync = false;
   oldk1 = oldk2 = oldk3 = 0;
 
   fChopperPw = 0.3f;
@@ -340,7 +333,7 @@ int main(void)
         HandleSystemRealTime(m.srt_type);
       }
     }
-    //System::Delay(1000);
-    //hw.seed.PrintLine("tempo: %d", tempo);
+    System::Delay(1000);
+    hw.seed.PrintLine("tempo: %d", tempo);
   }
 }
