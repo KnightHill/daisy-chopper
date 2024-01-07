@@ -17,6 +17,23 @@ Sync modes:
 
 Sync modes are mutually excusive and can only be changed while the effect is off. LED1 will show the color code of the current sync mode for one second after the change. 
 
+# Controls
+
+| Control | Description | Comment |
+| --- | --- | --- |
+| Encoder Turn | Change slicer pattern | pod |
+| Encoder Press | Set tempo to 120 BPM (only when the effect is off)| pod |
+| Button 1 | Slicer On/Off | pod |
+| Button 2 | Tap tempo | pod |
+| Button 3 | Reset pattern step | basic expansion board |
+| Button 4 | Switch between Tap temp, MIDI clock, and P.O. sync modes. Modes can be changed only when the effect is off. | basic expansion board |
+| Knob 1 | Set slicer PW ratio (10%-90%) | pod |
+| Knob 2 | Dry/Wet Mix (20%-100%) | pod |
+| Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
+| Knob 4 | N/A | basic expansion board |
+| LED 1 | Pattern indicator | pod |
+| LED 2 | Pattern indicator | pod |
+
 # Patterns
 
 <table>
@@ -168,22 +185,9 @@ Sync modes are mutually excusive and can only be changed while the effect is off
 </tbody>
 </table>
 
-# Controls
+# Testing
 
-| Control | Description | Comment |
-| --- | --- | --- |
-| Encoder Turn | Change slicer pattern | pod |
-| Encoder Press | Set tempo to 120 BPM (only when the effect is off)| pod |
-| Button 1 | Slicer On/Off | pod |
-| Button 2 | Tap tempo | pod |
-| Button 3 | Reset pattern step | basic expansion board |
-| Button 4 | Switch between Tap temp, MIDI clock, and P.O. sync modes. Modes can be changed only when the effect is off. | basic expansion board |
-| Knob 1 | Set slicer PW ratio (10%-90%) | pod |
-| Knob 2 | Dry/Wet Mix (20%-100%) | pod |
-| Knob 3 | Attack (0.02 - 0.2) | basic expansion board |
-| Knob 4 | N/A | basic expansion board |
-| LED 1 | Pattern indicator | pod |
-| LED 2 | Pattern indicator | pod |
+Sync tested with KeyStep 37, PO-33 and Volca Kick
 
 # TODO
 

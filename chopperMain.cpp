@@ -321,7 +321,7 @@ int main(void)
         HandleSystemRealTime(m.srt_type);
       }
     }
-    // System::Delay(1000);
-    // hw.seed.PrintLine("tempo: %d", tempo);
+    //System::Delay(1000);
+    //hw.seed.PrintLine("tempo: %d", tempo);
   }
 }
