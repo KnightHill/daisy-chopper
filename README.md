@@ -4,7 +4,7 @@ A simple wave slicer for E/S Daisy POD.
 
 Default tempo is set to 120 BPM (2Hz). Tempo's range is between 30 and 240 BPM.
 
-Tempo can be set using tap tempo (button 2) or MIDI clock.
+Tempo can be set using tap tempo (button 2), MIDI clock, or groove box (Pocket Operator, Volca) sync.
 
 Using buttons 3 through 6 and knobs 3 and 4 requires a [basic pod expander](https://github.com/KnightHill/daisy-basic-expander).
 
@@ -27,7 +27,7 @@ Sync modes are mutually excusive and can only be changed while the effect is off
 | Button 1 | Slicer On/Off | pod |
 | Button 2 | Tap tempo | pod |
 | Button 3 | Reset pattern step | basic expansion board |
-| Button 4 | Switch sync mode. Modes can be changed only when the effect is off. | basic expansion board |
+| Button 4 | Switch sync mode (only when the effect is off) | basic expansion board |
 | Button 5 | Beat sync | basic expansion board |
 | Button 6 | N/A | basic expansion board |
 
